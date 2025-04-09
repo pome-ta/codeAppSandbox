@@ -6,5 +6,10 @@ app.get('/', (req, res) => {
     res.send('Hello from Express')
 })
 
-app.listen(port, () => console.log(`app listening on port ${port}`))
+//app.listen(port, () => console.log(`app listening on port ${port}`))
 
+// Launch app
+app.listen(port, () => {
+  console.log(`Launching app... http://localhost:${port}` + '\n');
+  //console.log({app});
+});
