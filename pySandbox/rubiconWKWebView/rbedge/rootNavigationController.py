@@ -5,12 +5,15 @@ from pyrubicon.objc.api import objc_method
 from pyrubicon.objc.runtime import send_super, SEL
 
 from .lifeCycle import loop
-from .enumerations import UIBarButtonSystemItem
+from .enumerations import (
+  UIRectEdge,
+  UIBarButtonSystemItem,
+)
 
 from .functions import NSStringFromClass
+from . import pdbr
 
 UINavigationController = ObjCClass('UINavigationController')
-UINavigationBarAppearance = ObjCClass('UINavigationBarAppearance')
 UIBarButtonItem = ObjCClass('UIBarButtonItem')
 
 
@@ -27,19 +30,6 @@ class RootNavigationController(UINavigationController):
   def loadView(self):
     send_super(__class__, self, 'loadView')
     #print(f'{NSStringFromClass(__class__)}: loadView')
-    navigationBarAppearance = UINavigationBarAppearance.new()
-    navigationBarAppearance.configureWithDefaultBackground()
-    #navigationBarAppearance.configureWithOpaqueBackground()
-    #navigationBarAppearance.configureWithTransparentBackground()
-
-    '''
-    navigationBar = self.navigationBar
-    navigationBar.standardAppearance = navigationBarAppearance
-    navigationBar.scrollEdgeAppearance = navigationBarAppearance
-    navigationBar.compactAppearance = navigationBarAppearance
-    navigationBar.compactScrollEdgeAppearance = navigationBarAppearance
-    '''
-    
 
   @objc_method
   def viewDidLoad(self):
@@ -97,18 +87,37 @@ class RootNavigationController(UINavigationController):
     print(f'{NSStringFromClass(__class__)}: didReceiveMemoryWarning')
 
   @objc_method
-  def closeButtonTapped_(self, sender):
-    self.dismissViewControllerAnimated_completion_(True, None)
-
-  @objc_method
   def navigationController_willShowViewController_animated_(
       self, navigationController, viewController, animated: bool):
+    # xxx: layout 範囲の制限
+    #extendedLayout = UIRectEdge.none
+    #viewController.setEdgesForExtendedLayout_(extendedLayout)
+
     closeButtonItem = UIBarButtonItem.alloc().initWithBarButtonSystemItem(
       UIBarButtonSystemItem.close,
       target=navigationController,
-      action=SEL('closeButtonTapped:'))
+      action=SEL('doneButtonTapped:'))
+    # todo: view 遷移でのButton 重複を判別
+    closeButtonItem.setTag_(UIBarButtonSystemItem.close)
 
     visibleViewController = navigationController.visibleViewController
+
     navigationItem = visibleViewController.navigationItem
-    navigationItem.rightBarButtonItem = closeButtonItem
+    if (rightBarButtonItems := navigationItem.rightBarButtonItems):
+      # todo: `UIViewController` で、`rightBarButtonItem` が存在していた場合、`closeButtonItem` を右端に
+      setRightBarButtonItems = [
+        closeButtonItem,
+        *[
+          item for item in rightBarButtonItems
+          if item.tag != UIBarButtonSystemItem.close
+        ],
+      ]
+      navigationItem.setRightBarButtonItems_animated_(setRightBarButtonItems,
+                                                      True)
+    else:
+      navigationItem.rightBarButtonItem = closeButtonItem
+
+  @objc_method
+  def doneButtonTapped_(self, sender):
+    self.dismissViewControllerAnimated_completion_(True, None)
 
