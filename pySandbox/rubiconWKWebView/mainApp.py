@@ -1,6 +1,99 @@
+import ctypes
 from pathlib import Path
 from typing import Union
 
+from pyrubicon.objc.api import ObjCClass, ObjCProtocol
+from pyrubicon.objc.api import objc_method, objc_property
+from pyrubicon.objc.runtime import send_super, load_library, SEL
+from pyrubicon.objc.types import CGRect
+
+from rbedge.enumerations import (
+  NSURLRequestCachePolicy,
+  UIControlEvents,
+)
+from rbedge.functions import NSStringFromClass
+from rbedge import pdbr
+
+CoreGraphics = load_library('CoreGraphics')
+CGRectZero = CGRect.in_dll(CoreGraphics, 'CGRectZero')
+
+UIViewController = ObjCClass('UIViewController')
+NSLayoutConstraint = ObjCClass('NSLayoutConstraint')
+UIColor = ObjCClass('UIColor')
+
+
+class WebViewController(UIViewController):
+
+  @objc_method
+  def dealloc(self):
+    # xxx: 呼ばない-> `send_super(__class__, self, 'dealloc')`
+    print(f'- {NSStringFromClass(__class__)}: dealloc')
+
+  @objc_method
+  def loadView(self):
+    send_super(__class__, self, 'loadView')
+    #print(f'\t{NSStringFromClass(__class__)}: loadView')
+
+  @objc_method
+  def viewDidLoad(self):
+    send_super(__class__, self, 'viewDidLoad')
+    #print(f'\t{NSStringFromClass(__class__)}: viewDidLoad')
+
+    # --- Navigation
+    self.navigationItem.title = NSStringFromClass(__class__) if (
+      title := self.navigationItem.title) is None else title
+
+  @objc_method
+  def viewWillAppear_(self, animated: bool):
+    send_super(__class__,
+               self,
+               'viewWillAppear:',
+               animated,
+               argtypes=[
+                 ctypes.c_bool,
+               ])
+    #print(f'\t{NSStringFromClass(__class__)}: viewWillAppear_')
+
+  @objc_method
+  def viewDidAppear_(self, animated: bool):
+    send_super(__class__,
+               self,
+               'viewDidAppear:',
+               animated,
+               argtypes=[
+                 ctypes.c_bool,
+               ])
+    #print(f'\t{NSStringFromClass(__class__)}: viewDidAppear_')
+
+  @objc_method
+  def viewWillDisappear_(self, animated: bool):
+    send_super(__class__,
+               self,
+               'viewWillDisappear:',
+               animated,
+               argtypes=[
+                 ctypes.c_bool,
+               ])
+    # print(f'\t{NSStringFromClass(__class__)}: viewWillDisappear_')
+
+  @objc_method
+  def viewDidDisappear_(self, animated: bool):
+    send_super(__class__,
+               self,
+               'viewDidDisappear:',
+               animated,
+               argtypes=[
+                 ctypes.c_bool,
+               ])
+    print(f'\t{NSStringFromClass(__class__)}: viewDidDisappear_')
+
+  @objc_method
+  def didReceiveMemoryWarning(self):
+    send_super(__class__, self, 'didReceiveMemoryWarning')
+    print(f'{__class__}: didReceiveMemoryWarning')
+
+
+'''
 from pyrubicon.objc.api import ObjCClass, ObjCProtocol, objc_method, objc_property
 from pyrubicon.objc.runtime import SEL, send_super, load_library, objc_id
 from pyrubicon.objc.types import CGRect
@@ -120,7 +213,7 @@ class WebViewController(UIViewController,
     title = webView.title
     self.navigationItem.title = str(title)
 
-  '''
+  """
   @objc_method
   def webView_didReceiveAuthenticationChallenge_completionHandler_(
       self, webView, challenge, completionHandler):
@@ -128,7 +221,7 @@ class WebViewController(UIViewController,
     # xxx: 未確認
     print('didReceiveAuthenticationChallenge_completionHandler')
     print(completionHandler)
-  '''
+  "'"
 
   @objc_method
   def webView_didReceiveServerRedirectForProvisionalNavigation_(
@@ -145,23 +238,21 @@ class WebViewController(UIViewController,
 
 
 
-
+'''
 
 if __name__ == '__main__':
   from rbedge.app import App
   from rbedge.enumerations import UIModalPresentationStyle
-  
+
   target_url = Path('./src/index.html')
   #target_url = 'https://www.apple.cox'
 
   main_vc = WebViewController.new()
-  main_vc.targetURL = target_url
+  #main_vc.targetURL = target_url
 
   #presentation_style = UIModalPresentationStyle.fullScreen
   presentation_style = UIModalPresentationStyle.pageSheet
 
   app = App(main_vc, presentation_style)
   app.present()
-
-
 
