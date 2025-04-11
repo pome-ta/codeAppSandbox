@@ -21,18 +21,75 @@ UIViewController = ObjCClass('UIViewController')
 NSLayoutConstraint = ObjCClass('NSLayoutConstraint')
 UIColor = ObjCClass('UIColor')
 
+NSURL = ObjCClass('NSURL')
+
+WKWebView = ObjCClass('WKWebView')
+WKWebViewConfiguration = ObjCClass('WKWebViewConfiguration')
+WKWebsiteDataStore = ObjCClass('WKWebsiteDataStore')
+
+UIRefreshControl = ObjCClass('UIRefreshControl')
+
 
 class WebViewController(UIViewController):
+
+  webView: WKWebView = objc_property()
+  indexPath: NSURL = objc_property()
+  folderPath: NSURL = objc_property()
 
   @objc_method
   def dealloc(self):
     # xxx: 呼ばない-> `send_super(__class__, self, 'dealloc')`
-    print(f'- {NSStringFromClass(__class__)}: dealloc')
+    #print(f'- {NSStringFromClass(__class__)}: dealloc')
+    pass
+
+  @objc_method
+  def init(self):
+    send_super(__class__, self, 'init')
+    #print(f'\t{NSStringFromClass(__class__)}: init')
+    return self
+
+  @objc_method
+  def initWithLocalPath_(self, localPath: ctypes.py_object):
+    self.init()  #send_super(__class__, self, 'init')
+    #print(f'\t{NSStringFromClass(__class__)}: initWithTargetURL_')
+
+    if not ((target_path := Path(localPath)).exists()):
+      return self
+
+    fileURLWithPath = NSURL.fileURLWithPath_isDirectory_
+
+    self.indexPath = fileURLWithPath(str(target_path), False)
+    self.folderPath = fileURLWithPath(str(target_path.parent), True)
+
+    return self
 
   @objc_method
   def loadView(self):
     send_super(__class__, self, 'loadView')
     #print(f'\t{NSStringFromClass(__class__)}: loadView')
+    webConfiguration = WKWebViewConfiguration.new()
+    websiteDataStore = WKWebsiteDataStore.nonPersistentDataStore()
+
+    webConfiguration.websiteDataStore = websiteDataStore
+    webConfiguration.preferences.setValue_forKey_(
+      True, 'allowFileAccessFromFileURLs')
+
+    webView = WKWebView.alloc().initWithFrame_configuration_(
+      CGRectZero, webConfiguration)
+
+    webView.navigationDelegate = self
+    webView.scrollView.bounces = True
+
+    refreshControl = UIRefreshControl.new()
+    refreshControl.addTarget_action_forControlEvents_(
+      self, SEL('refreshWebView:'), UIControlEvents.valueChanged)
+
+    webView.scrollView.refreshControl = refreshControl
+
+    webView.loadFileURL_allowingReadAccessToURL_(self.indexPath,
+                                                 self.folderPath)
+
+    self.webView = webView
 
   @objc_method
   def viewDidLoad(self):
@@ -42,6 +99,27 @@ class WebViewController(UIViewController):
     # --- Navigation
     self.navigationItem.title = NSStringFromClass(__class__) if (
       title := self.navigationItem.title) is None else title
+
+    
+    # --- Layout
+    self.view.addSubview_(self.webView)
+    self.webView.translatesAutoresizingMaskIntoConstraints = False
+
+    #areaLayoutGuide = self.view.safeAreaLayoutGuide
+    #areaLayoutGuide = self.view.layoutMarginsGuide
+    areaLayoutGuide = self.view
+
+    NSLayoutConstraint.activateConstraints_([
+      self.webView.centerXAnchor.constraintEqualToAnchor_(
+        areaLayoutGuide.centerXAnchor),
+      self.webView.centerYAnchor.constraintEqualToAnchor_(
+        areaLayoutGuide.centerYAnchor),
+      self.webView.widthAnchor.constraintEqualToAnchor_multiplier_(
+        areaLayoutGuide.widthAnchor, 1.0),
+      self.webView.heightAnchor.constraintEqualToAnchor_multiplier_(
+        areaLayoutGuide.heightAnchor, 1.0),
+    ])
+    
 
   @objc_method
   def viewWillAppear_(self, animated: bool):
@@ -85,12 +163,58 @@ class WebViewController(UIViewController):
                argtypes=[
                  ctypes.c_bool,
                ])
-    print(f'\t{NSStringFromClass(__class__)}: viewDidDisappear_')
+    #print(f'\t{NSStringFromClass(__class__)}: viewDidDisappear_')
 
   @objc_method
   def didReceiveMemoryWarning(self):
     send_super(__class__, self, 'didReceiveMemoryWarning')
     print(f'{__class__}: didReceiveMemoryWarning')
+
+  @objc_method
+  def refreshWebView_(self, sender):
+    self.webView.reload()
+    sender.endRefreshing()
+
+  # --- WKNavigationDelegate
+  @objc_method
+  def webView_didCommitNavigation_(self, webView, navigation):
+    # 遷移開始時
+    #print('didCommitNavigation')
+    pass
+
+  @objc_method
+  def webView_didFailNavigation_withError_(self, webView, navigation, error):
+    # 遷移中にエラーが発生した時
+    # xxx: 未確認
+    print('didFailNavigation_withError')
+    print(error)
+
+  @objc_method
+  def webView_didFailProvisionalNavigation_withError_(self, webView,
+                                                      navigation, error):
+    # ページ読み込み時にエラーが発生した時
+    print('didFailProvisionalNavigation_withError')
+    print(error)
+
+  @objc_method
+  def webView_didFinishNavigation_(self, webView, navigation):
+    # ページ読み込みが完了した時
+    #print('didFinishNavigation')
+    title = webView.title
+    self.navigationItem.title = str(title)
+
+  @objc_method
+  def webView_didReceiveServerRedirectForProvisionalNavigation_(
+      self, webView, navigation):
+    # リダイレクトされた時
+    # xxx: 未確認
+    print('didReceiveServerRedirectForProvisionalNavigation')
+
+  @objc_method
+  def webView_didStartProvisionalNavigation_(self, webView, navigation):
+    # ページ読み込みが開始された時
+    #print('didStartProvisionalNavigation')
+    pass
 
 
 '''
@@ -244,10 +368,11 @@ if __name__ == '__main__':
   from rbedge.app import App
   from rbedge.enumerations import UIModalPresentationStyle
 
-  target_url = Path('./src/index.html')
+  local_path = Path('./src/index.html')
   #target_url = 'https://www.apple.cox'
 
-  main_vc = WebViewController.new()
+  #main_vc = WebViewController.new()
+  main_vc = WebViewController.alloc().initWithLocalPath_(local_path)
   #main_vc.targetURL = target_url
 
   #presentation_style = UIModalPresentationStyle.fullScreen
