@@ -98,24 +98,12 @@ class RootNavigationController(UINavigationController):
       target=navigationController,
       action=SEL('doneButtonTapped:'))
     # todo: view 遷移でのButton 重複を判別
-    closeButtonItem.setTag_(UIBarButtonSystemItem.close)
-
+    #leftBar
     visibleViewController = navigationController.visibleViewController
-
     navigationItem = visibleViewController.navigationItem
-    if (rightBarButtonItems := navigationItem.rightBarButtonItems):
-      # todo: `UIViewController` で、`rightBarButtonItem` が存在していた場合、`closeButtonItem` を右端に
-      setRightBarButtonItems = [
-        closeButtonItem,
-        *[
-          item for item in rightBarButtonItems
-          if item.tag != UIBarButtonSystemItem.close
-        ],
-      ]
-      navigationItem.setRightBarButtonItems_animated_(setRightBarButtonItems,
-                                                      True)
-    else:
-      navigationItem.rightBarButtonItem = closeButtonItem
+    navigationItem.leftBarButtonItem = closeButtonItem
+    
+    
 
   @objc_method
   def doneButtonTapped_(self, sender):

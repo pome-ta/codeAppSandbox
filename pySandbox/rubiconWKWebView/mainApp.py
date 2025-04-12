@@ -10,6 +10,7 @@ from pyrubicon.objc.types import CGRect
 from rbedge.enumerations import (
   NSURLRequestCachePolicy,
   UIControlEvents,
+  UIBarButtonSystemItem,
 )
 from rbedge.functions import NSStringFromClass
 from rbedge import pdbr
@@ -28,11 +29,12 @@ WKWebViewConfiguration = ObjCClass('WKWebViewConfiguration')
 WKWebsiteDataStore = ObjCClass('WKWebsiteDataStore')
 
 UIRefreshControl = ObjCClass('UIRefreshControl')
+UIBarButtonItem = ObjCClass('UIBarButtonItem')
 
 
 class WebViewController(UIViewController):
 
-  webView: WKWebView = objc_property()
+  wkWebView: WKWebView = objc_property()
   indexPath: NSURL = objc_property()
   folderPath: NSURL = objc_property()
 
@@ -74,22 +76,25 @@ class WebViewController(UIViewController):
     webConfiguration.preferences.setValue_forKey_(
       True, 'allowFileAccessFromFileURLs')
 
-    webView = WKWebView.alloc().initWithFrame_configuration_(
+    wkWebView = WKWebView.alloc().initWithFrame_configuration_(
       CGRectZero, webConfiguration)
 
-    webView.navigationDelegate = self
-    webView.scrollView.bounces = True
+    wkWebView.navigationDelegate = self
+    wkWebView.scrollView.bounces = True
 
     refreshControl = UIRefreshControl.new()
     refreshControl.addTarget_action_forControlEvents_(
       self, SEL('refreshWebView:'), UIControlEvents.valueChanged)
+    wkWebView.scrollView.refreshControl = refreshControl
 
-    webView.scrollView.refreshControl = refreshControl
+    refreshButtonItem = UIBarButtonItem.alloc().initWithBarButtonSystemItem(
+      UIBarButtonSystemItem.refresh, target=self, action=SEL('reLoadWebView:'))
+    self.navigationItem.rightBarButtonItem = refreshButtonItem
 
-    webView.loadFileURL_allowingReadAccessToURL_(self.indexPath,
-                                                 self.folderPath)
+    wkWebView.loadFileURL_allowingReadAccessToURL_(self.indexPath,
+                                                   self.folderPath)
 
-    self.webView = webView
+    self.wkWebView = wkWebView
 
   @objc_method
   def viewDidLoad(self):
@@ -101,21 +106,21 @@ class WebViewController(UIViewController):
       title := self.navigationItem.title) is None else title
 
     # --- Layout
-    self.view.addSubview_(self.webView)
-    self.webView.translatesAutoresizingMaskIntoConstraints = False
+    self.view.addSubview_(self.wkWebView)
+    self.wkWebView.translatesAutoresizingMaskIntoConstraints = False
 
     #areaLayoutGuide = self.view.safeAreaLayoutGuide
     #areaLayoutGuide = self.view.layoutMarginsGuide
     areaLayoutGuide = self.view
 
     NSLayoutConstraint.activateConstraints_([
-      self.webView.centerXAnchor.constraintEqualToAnchor_(
+      self.wkWebView.centerXAnchor.constraintEqualToAnchor_(
         areaLayoutGuide.centerXAnchor),
-      self.webView.centerYAnchor.constraintEqualToAnchor_(
+      self.wkWebView.centerYAnchor.constraintEqualToAnchor_(
         areaLayoutGuide.centerYAnchor),
-      self.webView.widthAnchor.constraintEqualToAnchor_multiplier_(
+      self.wkWebView.widthAnchor.constraintEqualToAnchor_multiplier_(
         areaLayoutGuide.widthAnchor, 1.0),
-      self.webView.heightAnchor.constraintEqualToAnchor_multiplier_(
+      self.wkWebView.heightAnchor.constraintEqualToAnchor_multiplier_(
         areaLayoutGuide.heightAnchor, 1.0),
     ])
 
@@ -169,8 +174,12 @@ class WebViewController(UIViewController):
     print(f'{__class__}: didReceiveMemoryWarning')
 
   @objc_method
+  def reLoadWebView_(self, sender):
+    self.wkWebView.reload()
+
+  @objc_method
   def refreshWebView_(self, sender):
-    self.webView.reload()
+    self.reLoadWebView_(sender)
     sender.endRefreshing()
 
   # --- WKNavigationDelegate
