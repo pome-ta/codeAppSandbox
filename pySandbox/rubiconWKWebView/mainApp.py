@@ -94,6 +94,8 @@ class WebViewController(UIViewController):
     wkWebView.loadFileURL_allowingReadAccessToURL_(self.indexPath,
                                                    self.folderPath)
 
+    
+    self.navigationItem.title = str(wkWebView.title)
     self.wkWebView = wkWebView
 
   @objc_method
@@ -134,6 +136,7 @@ class WebViewController(UIViewController):
                  ctypes.c_bool,
                ])
     #print(f'\t{NSStringFromClass(__class__)}: viewWillAppear_')
+    print(f'viewWillAppear: {self.wkWebView.title}')
 
   @objc_method
   def viewDidAppear_(self, animated: bool):
@@ -145,6 +148,7 @@ class WebViewController(UIViewController):
                  ctypes.c_bool,
                ])
     #print(f'\t{NSStringFromClass(__class__)}: viewDidAppear_')
+    print(f'viewDidAppear: {self.wkWebView.title}')
 
   @objc_method
   def viewWillDisappear_(self, animated: bool):
@@ -156,6 +160,7 @@ class WebViewController(UIViewController):
                  ctypes.c_bool,
                ])
     # print(f'\t{NSStringFromClass(__class__)}: viewWillDisappear_')
+    print(f'viewWillDisappear: {self.wkWebView.title}')
 
   @objc_method
   def viewDidDisappear_(self, animated: bool):
@@ -208,7 +213,7 @@ class WebViewController(UIViewController):
     # ページ読み込みが完了した時
     #print('didFinishNavigation')
     title = webView.title
-    self.navigationItem.title = str(title)
+    #self.navigationItem.title = str(title)
 
   @objc_method
   def webView_didReceiveServerRedirectForProvisionalNavigation_(
