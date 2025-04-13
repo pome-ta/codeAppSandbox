@@ -62,6 +62,7 @@ class UISceneActivationState:
   foregroundInactive: int = 1
   background: int = 2
 
+
 # ref: [UIControlEvents | Apple Developer Documentation](https://developer.apple.com/documentation/uikit/uicontrolevents?language=objc)
 @dataclass
 class UIControlEvents:
@@ -94,6 +95,7 @@ class UITableViewStyle:
   plain: int = 0
   grouped: int = 1
   insetGrouped: int = 2
+
 
 # ref: [NSURLRequestCachePolicy | Apple Developer Documentation](https://developer.apple.com/documentation/foundation/nsurlrequestcachepolicy)
 @dataclass
