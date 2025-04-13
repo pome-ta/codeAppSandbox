@@ -29,6 +29,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
 window.addEventListener('load', (event) => {
   console.log(3);
+  const logDiv = document.getElementById('logDiv');
+  const textContent = logDiv.textContent;
+  console.log(textContent);
 });
 
 console.log(4);
