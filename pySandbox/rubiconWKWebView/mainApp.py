@@ -82,14 +82,14 @@ class WebViewController(UIViewController):
     wkWebView.navigationDelegate = self
     wkWebView.scrollView.bounces = True
 
+    refreshButtonItem = UIBarButtonItem.alloc().initWithBarButtonSystemItem(
+      UIBarButtonSystemItem.refresh, target=self, action=SEL('reLoadWebView:'))
+    self.navigationItem.rightBarButtonItem = refreshButtonItem
+
     refreshControl = UIRefreshControl.new()
     refreshControl.addTarget_action_forControlEvents_(
       self, SEL('refreshWebView:'), UIControlEvents.valueChanged)
     wkWebView.scrollView.refreshControl = refreshControl
-
-    refreshButtonItem = UIBarButtonItem.alloc().initWithBarButtonSystemItem(
-      UIBarButtonSystemItem.refresh, target=self, action=SEL('reLoadWebView:'))
-    self.navigationItem.rightBarButtonItem = refreshButtonItem
 
     wkWebView.loadFileURL_allowingReadAccessToURL_(self.indexPath,
                                                    self.folderPath)

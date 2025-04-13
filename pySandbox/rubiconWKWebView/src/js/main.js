@@ -8,6 +8,7 @@ document.title = 'hoge';
 function addElement() {
   // 新しい div 要素を作成します
   const newDiv = document.createElement('div');
+  newDiv.setAttribute('id','logDiv');
 
   // いくつかの内容を与えます
   const newContent = document.createTextNode('みなさん、こんにちは!');
