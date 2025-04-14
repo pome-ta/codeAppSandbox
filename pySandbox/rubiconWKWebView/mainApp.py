@@ -42,8 +42,8 @@ class WebViewController(UIViewController):
   @objc_method
   def dealloc(self):
     # xxx: 呼ばない-> `send_super(__class__, self, 'dealloc')`
-    #print(f'- {NSStringFromClass(__class__)}: dealloc')
     self.wkWebView.removeObserver_forKeyPath_(self, at('title'))
+    #print(f'- {NSStringFromClass(__class__)}: dealloc')
 
   @objc_method
   def init(self):
@@ -217,8 +217,9 @@ class WebViewController(UIViewController):
   def webView_didFinishNavigation_(self, webView, navigation):
     # ページ読み込みが完了した時
     #print('didFinishNavigation')
-    title = webView.title
-    self.navigationItem.title = str(title)
+    #self.navigationItem.title = str(webView.title)
+    # todo: observe でtitle 変化の監視をしてるため不要
+    pass
 
   @objc_method
   def webView_didReceiveServerRedirectForProvisionalNavigation_(

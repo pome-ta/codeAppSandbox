@@ -3,7 +3,7 @@
 
 console.log(1);
 
-document.title = 'hoge';
+document.title = 'js top title';
 
 function addElement() {
   // 新しい div 要素を作成します
@@ -29,6 +29,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
 window.addEventListener('load', (event) => {
   console.log(3);
+  document.title = 'js load title';
   const logDiv = document.getElementById('logDiv');
   const textContent = logDiv.textContent;
   console.log(textContent);
