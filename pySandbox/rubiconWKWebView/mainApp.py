@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Union
 
 from pyrubicon.objc.api import ObjCClass, ObjCProtocol
-from pyrubicon.objc.api import objc_method, objc_property
+from pyrubicon.objc.api import objc_method, objc_property, at
 from pyrubicon.objc.runtime import send_super, load_library, SEL
 from pyrubicon.objc.types import CGRect
 
@@ -11,6 +11,7 @@ from rbedge.enumerations import (
   NSURLRequestCachePolicy,
   UIControlEvents,
   UIBarButtonSystemItem,
+  NSKeyValueObservingOptions,
 )
 from rbedge.functions import NSStringFromClass
 from rbedge import pdbr
@@ -42,7 +43,7 @@ class WebViewController(UIViewController):
   def dealloc(self):
     # xxx: 呼ばない-> `send_super(__class__, self, 'dealloc')`
     #print(f'- {NSStringFromClass(__class__)}: dealloc')
-    pass
+    self.wkWebView.removeObserver_forKeyPath_(self, at('title'))
 
   @objc_method
   def init(self):
@@ -94,8 +95,9 @@ class WebViewController(UIViewController):
     wkWebView.loadFileURL_allowingReadAccessToURL_(self.indexPath,
                                                    self.folderPath)
 
-    
-    self.navigationItem.title = str(wkWebView.title)
+    # todo: (.js) 等での`title` 変化を監視
+    wkWebView.addObserver_forKeyPath_options_context_(
+      self, at('title'), NSKeyValueObservingOptions.new, None)
     self.wkWebView = wkWebView
 
   @objc_method
@@ -136,7 +138,6 @@ class WebViewController(UIViewController):
                  ctypes.c_bool,
                ])
     #print(f'\t{NSStringFromClass(__class__)}: viewWillAppear_')
-    print(f'viewWillAppear: {self.wkWebView.title}')
 
   @objc_method
   def viewDidAppear_(self, animated: bool):
@@ -148,7 +149,6 @@ class WebViewController(UIViewController):
                  ctypes.c_bool,
                ])
     #print(f'\t{NSStringFromClass(__class__)}: viewDidAppear_')
-    print(f'viewDidAppear: {self.wkWebView.title}')
 
   @objc_method
   def viewWillDisappear_(self, animated: bool):
@@ -160,7 +160,6 @@ class WebViewController(UIViewController):
                  ctypes.c_bool,
                ])
     # print(f'\t{NSStringFromClass(__class__)}: viewWillDisappear_')
-    print(f'viewWillDisappear: {self.wkWebView.title}')
 
   @objc_method
   def viewDidDisappear_(self, animated: bool):
@@ -186,6 +185,12 @@ class WebViewController(UIViewController):
   def refreshWebView_(self, sender):
     self.reLoadWebView_(sender)
     sender.endRefreshing()
+
+  @objc_method
+  def observeValueForKeyPath_ofObject_change_context_(self, keyPath, objct,
+                                                      change, context):
+    title = self.wkWebView.title
+    self.navigationItem.title = str(title)
 
   # --- WKNavigationDelegate
   @objc_method
@@ -213,7 +218,7 @@ class WebViewController(UIViewController):
     # ページ読み込みが完了した時
     #print('didFinishNavigation')
     title = webView.title
-    #self.navigationItem.title = str(title)
+    self.navigationItem.title = str(title)
 
   @objc_method
   def webView_didReceiveServerRedirectForProvisionalNavigation_(
