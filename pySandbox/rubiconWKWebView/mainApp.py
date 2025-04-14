@@ -80,7 +80,9 @@ class WebViewController(UIViewController):
     wkWebView = WKWebView.alloc().initWithFrame_configuration_(
       CGRectZero, webConfiguration)
 
+    #wkWebView.uiDelegate = self
     wkWebView.navigationDelegate = self
+
     wkWebView.scrollView.bounces = True
 
     refreshButtonItem = UIBarButtonItem.alloc().initWithBarButtonSystemItem(
@@ -95,7 +97,7 @@ class WebViewController(UIViewController):
     wkWebView.loadFileURL_allowingReadAccessToURL_(self.indexPath,
                                                    self.folderPath)
 
-    # todo: (.js) 等での`title` 変化を監視
+    # todo: (.js 等での) `title` 変化を監視
     wkWebView.addObserver_forKeyPath_options_context_(
       self, at('title'), NSKeyValueObservingOptions.new, None)
     self.wkWebView = wkWebView
@@ -180,6 +182,7 @@ class WebViewController(UIViewController):
   @objc_method
   def reLoadWebView_(self, sender):
     self.wkWebView.reload()
+    #self.wkWebView.reloadFromOrigin()
 
   @objc_method
   def refreshWebView_(self, sender):
@@ -192,6 +195,7 @@ class WebViewController(UIViewController):
     title = self.wkWebView.title
     self.navigationItem.title = str(title)
 
+  # --- WKUIDelegate
   # --- WKNavigationDelegate
   @objc_method
   def webView_didCommitNavigation_(self, webView, navigation):
