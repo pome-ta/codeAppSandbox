@@ -54,7 +54,7 @@ class WebViewController(UIViewController):
     return self
 
   @objc_method
-  def initWithIndexPath_(self,index_path: ctypes.py_object):
+  def initWithIndexPath_(self, index_path: ctypes.py_object):
     self.init()  #send_super(__class__, self, 'init')
     #print(f'\t{NSStringFromClass(__class__)}: initWithTargetURL_')
 
@@ -164,10 +164,10 @@ class WebViewController(UIViewController):
                  ctypes.c_bool,
                ])
     # print(f'\t{NSStringFromClass(__class__)}: viewWillDisappear_')
-    
-    if self.savePath is None or not(self.savePath.exists()):
-      return 
-    
+
+    if self.savePath is None or not (self.savePath.exists()):
+      return
+
     javaScriptString = '''
     (function getShaderCode() {
       const logDiv = document.getElementById('logDiv');
@@ -180,8 +180,6 @@ class WebViewController(UIViewController):
       objc_instance = ObjCInstance(object_id)
       self.savePath.write_text(str(objc_instance), encoding='utf-8')
 
-    #pdbr.state(self.wkWebView)
-    #print(self.savePath)
     self.wkWebView.evaluateJavaScript_completionHandler_(
       at(javaScriptString),
       Block(completionHandler, None, *[
@@ -221,7 +219,6 @@ class WebViewController(UIViewController):
     title = self.wkWebView.title
     #self.navigationItem.prompt = str(title)
     self.navigationItem.title = str(title)
-    
 
   # --- WKUIDelegate
   # --- WKNavigationDelegate
@@ -251,9 +248,8 @@ class WebViewController(UIViewController):
     #print('didFinishNavigation')
     #self.navigationItem.title = str(webView.title)
     #self.navigationItem.prompt = str(webView.title)
-    #title = webView.title
-    #print(title)
-    #self.navigationItem.setPrompt_(str(title))
+    title = webView.title
+    self.navigationItem.setPrompt_(str(title))
     # todo: observe でtitle 変化の監視をしてるため不要
     #pdbr.state(self.navigationItem)
     pass
