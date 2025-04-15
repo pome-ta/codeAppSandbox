@@ -38,7 +38,7 @@ class WebViewController(UIViewController):
   wkWebView: WKWebView = objc_property()
   indexPath: NSURL = objc_property()
   folderPath: NSURL = objc_property()
-  #savePath: Path = objc_property(ctypes.py_object)
+  savePath: Path = objc_property(ctypes.py_object)
 
   @objc_method
   def dealloc(self):
@@ -50,7 +50,7 @@ class WebViewController(UIViewController):
   def init(self):
     send_super(__class__, self, 'init')
     #print(f'\t{NSStringFromClass(__class__)}: init')
-    #self.savePath = None
+    self.savePath = None
     return self
 
   @objc_method
@@ -164,10 +164,10 @@ class WebViewController(UIViewController):
                  ctypes.c_bool,
                ])
     # print(f'\t{NSStringFromClass(__class__)}: viewWillDisappear_')
-    '''
-    if self.savePath is None:
+    
+    if self.savePath is None or not(self.savePath.exists()):
       return 
-    '''
+    
     javaScriptString = '''
     (function getShaderCode() {
       const logDiv = document.getElementById('logDiv');
@@ -177,7 +177,8 @@ class WebViewController(UIViewController):
     '''
 
     def completionHandler(object_id, error_id):
-      print(ObjCInstance(object_id))
+      objc_instance = ObjCInstance(object_id)
+      self.savePath.write_text(str(objc_instance), encoding='utf-8')
 
     #pdbr.state(self.wkWebView)
     #print(self.savePath)
@@ -250,10 +251,12 @@ class WebViewController(UIViewController):
     #print('didFinishNavigation')
     #self.navigationItem.title = str(webView.title)
     #self.navigationItem.prompt = str(webView.title)
-    title = webView.title
-    self.navigationItem.setPrompt_(str(title))
+    #title = webView.title
+    #print(title)
+    #self.navigationItem.setPrompt_(str(title))
     # todo: observe でtitle 変化の監視をしてるため不要
     #pdbr.state(self.navigationItem)
+    pass
 
   @objc_method
   def webView_didReceiveServerRedirectForProvisionalNavigation_(
@@ -277,7 +280,7 @@ if __name__ == '__main__':
   save_path = Path('./src/outLogs/wkLog.js')
 
   main_vc = WebViewController.alloc().initWithIndexPath_(index_path)
-  #main_vc.savePath = save_path
+  main_vc.savePath = save_path
 
   presentation_style = UIModalPresentationStyle.fullScreen
   #presentation_style = UIModalPresentationStyle.pageSheet
