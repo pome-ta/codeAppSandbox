@@ -2,9 +2,9 @@ import ctypes
 from pathlib import Path
 from typing import Union
 
-from pyrubicon.objc.api import ObjCClass, ObjCProtocol
+from pyrubicon.objc.api import ObjCClass, ObjCInstance, Block
 from pyrubicon.objc.api import objc_method, objc_property, at
-from pyrubicon.objc.runtime import send_super, load_library, SEL
+from pyrubicon.objc.runtime import send_super, objc_id, load_library, SEL
 from pyrubicon.objc.types import CGRect
 
 from rbedge.enumerations import (
@@ -38,6 +38,7 @@ class WebViewController(UIViewController):
   wkWebView: WKWebView = objc_property()
   indexPath: NSURL = objc_property()
   folderPath: NSURL = objc_property()
+  #savePath: Path = objc_property(ctypes.py_object)
 
   @objc_method
   def dealloc(self):
@@ -49,14 +50,15 @@ class WebViewController(UIViewController):
   def init(self):
     send_super(__class__, self, 'init')
     #print(f'\t{NSStringFromClass(__class__)}: init')
+    #self.savePath = None
     return self
 
   @objc_method
-  def initWithLocalPath_(self, localPath: ctypes.py_object):
+  def initWithIndexPath_(self,index_path: ctypes.py_object):
     self.init()  #send_super(__class__, self, 'init')
     #print(f'\t{NSStringFromClass(__class__)}: initWithTargetURL_')
 
-    if not ((target_path := Path(localPath)).exists()):
+    if not ((target_path := Path(index_path)).exists()):
       return self
 
     fileURLWithPath = NSURL.fileURLWithPath_isDirectory_
@@ -162,6 +164,29 @@ class WebViewController(UIViewController):
                  ctypes.c_bool,
                ])
     # print(f'\t{NSStringFromClass(__class__)}: viewWillDisappear_')
+    '''
+    if self.savePath is None:
+      return 
+    '''
+    javaScriptString = '''
+    (function getShaderCode() {
+      const logDiv = document.getElementById('logDiv');
+      const textContent = logDiv.textContent;
+      return textContent;
+    }());
+    '''
+
+    def completionHandler(object_id, error_id):
+      print(ObjCInstance(object_id))
+
+    #pdbr.state(self.wkWebView)
+    #print(self.savePath)
+    self.wkWebView.evaluateJavaScript_completionHandler_(
+      at(javaScriptString),
+      Block(completionHandler, None, *[
+        objc_id,
+        objc_id,
+      ]))
 
   @objc_method
   def viewDidDisappear_(self, animated: bool):
@@ -193,7 +218,9 @@ class WebViewController(UIViewController):
   def observeValueForKeyPath_ofObject_change_context_(self, keyPath, objct,
                                                       change, context):
     title = self.wkWebView.title
+    #self.navigationItem.prompt = str(title)
     self.navigationItem.title = str(title)
+    
 
   # --- WKUIDelegate
   # --- WKNavigationDelegate
@@ -222,8 +249,11 @@ class WebViewController(UIViewController):
     # ページ読み込みが完了した時
     #print('didFinishNavigation')
     #self.navigationItem.title = str(webView.title)
+    #self.navigationItem.prompt = str(webView.title)
+    title = webView.title
+    self.navigationItem.setPrompt_(str(title))
     # todo: observe でtitle 変化の監視をしてるため不要
-    pass
+    #pdbr.state(self.navigationItem)
 
   @objc_method
   def webView_didReceiveServerRedirectForProvisionalNavigation_(
@@ -243,9 +273,11 @@ if __name__ == '__main__':
   from rbedge.app import App
   from rbedge.enumerations import UIModalPresentationStyle
 
-  local_path = Path('./src/index.html')
+  index_path = Path('./src/index.html')
+  save_path = Path('./src/outLogs/wkLog.js')
 
-  main_vc = WebViewController.alloc().initWithLocalPath_(local_path)
+  main_vc = WebViewController.alloc().initWithIndexPath_(index_path)
+  #main_vc.savePath = save_path
 
   presentation_style = UIModalPresentationStyle.fullScreen
   #presentation_style = UIModalPresentationStyle.pageSheet
