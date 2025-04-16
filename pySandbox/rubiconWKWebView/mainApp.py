@@ -4,7 +4,7 @@ from typing import Union
 
 from pyrubicon.objc.api import ObjCClass, ObjCInstance, Block
 from pyrubicon.objc.api import objc_method, objc_property, at
-from pyrubicon.objc.runtime import send_super, objc_id, load_library, SEL
+from pyrubicon.objc.runtime import send_super, objc_id, SEL
 from pyrubicon.objc.types import CGRect
 
 from rbedge.enumerations import (
@@ -13,11 +13,11 @@ from rbedge.enumerations import (
   UIBarButtonSystemItem,
   NSKeyValueObservingOptions,
 )
+from rbedge.makeZero import CGRectZero
 from rbedge.functions import NSStringFromClass
 from rbedge import pdbr
 
-CoreGraphics = load_library('CoreGraphics')
-CGRectZero = CGRect.in_dll(CoreGraphics, 'CGRectZero')
+
 
 UIViewController = ObjCClass('UIViewController')
 NSLayoutConstraint = ObjCClass('NSLayoutConstraint')
