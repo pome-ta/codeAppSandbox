@@ -5,7 +5,7 @@ from typing import Union
 from pyrubicon.objc.api import ObjCClass, ObjCInstance, Block
 from pyrubicon.objc.api import objc_method, objc_property, at
 from pyrubicon.objc.runtime import send_super, objc_id, SEL
-from pyrubicon.objc.types import CGRect
+
 
 from rbedge.enumerations import (
   NSURLRequestCachePolicy,
@@ -140,8 +140,8 @@ class WebViewController(UIViewController):
     #pdbr.state(toolbar)
     #pdbr.state(visibleViewController)
     #print(toolbar.items)
-    #print(visibleViewController.toolbarItems)
-    #pdbr.state(self.navigationController)
+    #print(visibleViewController)
+    #pdbr.state(self.navigationController.toolbar)
 
     self.wkWebView = wkWebView
 
@@ -157,9 +157,9 @@ class WebViewController(UIViewController):
     self.view.addSubview_(self.wkWebView)
     self.wkWebView.translatesAutoresizingMaskIntoConstraints = False
 
-    #areaLayoutGuide = self.view.safeAreaLayoutGuide
+    areaLayoutGuide = self.view.safeAreaLayoutGuide
     #areaLayoutGuide = self.view.layoutMarginsGuide
-    areaLayoutGuide = self.view
+    #areaLayoutGuide = self.view
 
     NSLayoutConstraint.activateConstraints_([
       self.wkWebView.centerXAnchor.constraintEqualToAnchor_(
@@ -313,6 +313,7 @@ class WebViewController(UIViewController):
 
   @objc_method
   def doneButtonTapped_(self, sender):
+    #pdbr.state(self.navigationController.navigationBar)
     self.dismissViewControllerAnimated_completion_(True, None)
 
 

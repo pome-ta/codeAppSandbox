@@ -9,7 +9,7 @@ from .enumerations import (
   UIRectEdge,
   UIBarButtonSystemItem,
 )
-
+from .makeZero import CGRectZero
 from .functions import NSStringFromClass
 from . import pdbr
 
@@ -30,12 +30,15 @@ class RootNavigationController(UINavigationController):
   def loadView(self):
     send_super(__class__, self, 'loadView')
     #print(f'{NSStringFromClass(__class__)}: loadView')
+    #pdbr.state(self)
+    
 
   @objc_method
   def viewDidLoad(self):
     send_super(__class__, self, 'viewDidLoad')
     #print(f'{NSStringFromClass(__class__)}: viewDidLoad')
-    self.delegate = self
+    #self.delegate = self
+    #self.setNavigationBar_(None)
     '''
     self.setToolbarHidden_animated_(False, True)
 
@@ -100,8 +103,9 @@ class RootNavigationController(UINavigationController):
   def navigationController_willShowViewController_animated_(
       self, navigationController, viewController, animated: bool):
     # xxx: layout 範囲の制限
-    #extendedLayout = UIRectEdge.none
+    extendedLayout = UIRectEdge.none
     #viewController.setEdgesForExtendedLayout_(extendedLayout)
+    
 
     closeButtonItem = UIBarButtonItem.alloc().initWithBarButtonSystemItem(
       UIBarButtonSystemItem.close,
