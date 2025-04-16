@@ -14,23 +14,12 @@ from rbedge.enumerations import (
   NSKeyValueObservingOptions,
 )
 from rbedge.makeZero import CGRectZero
-
-
 from rbedge.functions import NSStringFromClass
 from rbedge import pdbr
 
 UIViewController = ObjCClass('UIViewController')
 NSLayoutConstraint = ObjCClass('NSLayoutConstraint')
 UIColor = ObjCClass('UIColor')
-
-UINavigationController = ObjCClass('UINavigationController')
-
-UIToolbar = ObjCClass('UIToolbar')  # todo: 型
-UIToolbarAppearance = ObjCClass('UIToolbarAppearance')
-UIBarButtonItem = ObjCClass('UIBarButtonItem')
-UIImage = ObjCClass('UIImage')
-UIMenu = ObjCClass('UIMenu')
-UIAction = ObjCClass('UIAction')
 
 NSURL = ObjCClass('NSURL')
 
@@ -48,9 +37,6 @@ class WebViewController(UIViewController):
   indexPath: NSURL = objc_property()
   folderPath: NSURL = objc_property()
   savePath: Path = objc_property(ctypes.py_object)
-  
-  toolbar: UIToolbar = objc_property()
-  navigationContainer: UINavigationController = objc_property()
 
   @objc_method
   def dealloc(self):
@@ -104,10 +90,6 @@ class WebViewController(UIViewController):
     #arrow.clockwise.circle
     #multiply.circle
 
-    refreshButtonItem = UIBarButtonItem.alloc().initWithBarButtonSystemItem(
-      UIBarButtonSystemItem.refresh, target=self, action=SEL('reLoadWebView:'))
-    self.navigationItem.rightBarButtonItem = refreshButtonItem
-
     refreshControl = UIRefreshControl.new()
     refreshControl.addTarget_action_forControlEvents_(
       self, SEL('refreshWebView:'), UIControlEvents.valueChanged)
@@ -120,27 +102,47 @@ class WebViewController(UIViewController):
     wkWebView.addObserver_forKeyPath_options_context_(
       self, at('title'), NSKeyValueObservingOptions.new, None)
     '''
-    
-    # --- UIToolbar set up
-    navigationContainer = UINavigationController.alloc(
-    ).initWithNavigationBarClass_toolbarClass_(None, None)
-    # todo: `setToolbarHidden` は先に指定
-    # xxx: `setItems` 後だと、items 出てこない
-    navigationContainer.setNavigationBarHidden_(True)
-    navigationContainer.setToolbarHidden_animated_(False, True)
+    refreshButtonItem = UIBarButtonItem.alloc().initWithBarButtonSystemItem(
+      UIBarButtonSystemItem.refresh, target=self, action=SEL('reLoadWebView:'))
+    #self.navigationItem.rightBarButtonItem = refreshButtonItem
 
-    '''
-    self.addChildViewController_(navigationContainer)
-    self.view.addSubview_(navigationContainer.view)
-    navigationContainer.didMoveToParentViewController_(self)
-    '''
+    saveButtonItem = UIBarButtonItem.alloc().initWithBarButtonSystemItem(
+      UIBarButtonSystemItem.close,
+      target=self,
+      action=SEL('doneButtonTapped:'))
 
-    # xxx: 変数化してあげた方が、表示速度速い?
-    self.toolbar = navigationContainer.toolbar
-    self.navigationContainer = navigationContainer
-    
-    
-    #pdbr.state(self)
+    closeButtonItem = UIBarButtonItem.alloc().initWithBarButtonSystemItem(
+      UIBarButtonSystemItem.close,
+      target=self,
+      action=SEL('doneButtonTapped:'))
+
+    flexibleSpaceBarButtonItem = UIBarButtonItem.alloc(
+    ).initWithBarButtonSystemItem(UIBarButtonSystemItem.flexibleSpace,
+                                  target=None,
+                                  action=None)
+
+    toolbarButtonItems = [
+      closeButtonItem,
+      flexibleSpaceBarButtonItem,
+      refreshButtonItem,
+      flexibleSpaceBarButtonItem,
+      saveButtonItem,
+    ]
+
+    self.navigationController.setNavigationBarHidden_animated_(True, True)
+    self.navigationController.setToolbarHidden_animated_(False, True)
+    self.navigationController.setHidesBarsOnSwipe_(True)
+
+    #visibleViewController = self.navigationController.visibleViewController
+    self.setToolbarItems_animated_(toolbarButtonItems, True)
+    #toolbar.setItems_animated_([refreshButtonItem,],False)
+
+    #pdbr.state(toolbar)
+    #pdbr.state(visibleViewController)
+    #print(toolbar.items)
+    #print(visibleViewController.toolbarItems)
+    #pdbr.state(self.navigationController)
+
     self.wkWebView = wkWebView
 
   @objc_method
@@ -149,51 +151,8 @@ class WebViewController(UIViewController):
     #print(f'\t{NSStringFromClass(__class__)}: viewDidLoad')
 
     # --- Navigation
-    self.navigationItem.title = NSStringFromClass(__class__) if (
-      title := self.navigationItem.title) is None else title
+    #self.navigationItem.title = NSStringFromClass(__class__) if (title := self.navigationItem.title) is None else title
 
-    # --- toolbarAppearance setup
-    toolbarAppearance = UIToolbarAppearance.new()
-    toolbarAppearance.configureWithDefaultBackground()
-    #toolbarAppearance.configureWithOpaqueBackground()
-    #toolbarAppearance.configureWithTransparentBackground()
-
-    self.toolbar.standardAppearance = toolbarAppearance
-    self.toolbar.scrollEdgeAppearance = toolbarAppearance
-    self.toolbar.compactAppearance = toolbarAppearance
-    self.toolbar.compactScrollEdgeAppearance = toolbarAppearance
-
-    # MARK: - UIBarButtonItem Creation and Configuration
-    trashBarButtonItem = UIBarButtonItem.alloc().initWithBarButtonSystemItem(
-      UIBarButtonSystemItem.trash,
-      target=self,
-      action=SEL('barButtonItemClicked:'))
-
-    flexibleSpaceBarButtonItem = UIBarButtonItem.alloc(
-    ).initWithBarButtonSystemItem(UIBarButtonSystemItem.flexibleSpace,
-                                  target=None,
-                                  action=None)
-
-    buttonMenu = UIMenu.menuWithTitle_children_('', [
-      UIAction.actionWithTitle_image_identifier_handler_(
-        f'Option {i + 1}', None, None,
-        Block(self.menuHandler_, None, ctypes.c_void_p)) for i in range(5)
-    ])
-    customTitleBarButtonItem = UIBarButtonItem.alloc().initWithImage_menu_(
-      UIImage.systemImageNamed('list.number'), buttonMenu)
-
-    toolbarButtonItems = [
-      trashBarButtonItem,
-      flexibleSpaceBarButtonItem,
-      customTitleBarButtonItem,
-    ]
-
-    self.toolbar.setItems_animated_(toolbarButtonItems, True)
-
-    
-    
-    
-    
     # --- Layout
     self.view.addSubview_(self.wkWebView)
     self.wkWebView.translatesAutoresizingMaskIntoConstraints = False
@@ -212,11 +171,6 @@ class WebViewController(UIViewController):
       self.wkWebView.heightAnchor.constraintEqualToAnchor_multiplier_(
         areaLayoutGuide.heightAnchor, 1.0),
     ])
-    
-    self.addChildViewController_(self.navigationContainer)
-    self.view.addSubview_(self.navigationContainer.view)
-    self.navigationContainer.didMoveToParentViewController_(self)
-    
 
   @objc_method
   def viewWillAppear_(self, animated: bool):
@@ -291,6 +245,7 @@ class WebViewController(UIViewController):
 
   @objc_method
   def reLoadWebView_(self, sender):
+    print('h')
     self.wkWebView.reload()
     #self.wkWebView.reloadFromOrigin()
 
@@ -337,7 +292,7 @@ class WebViewController(UIViewController):
     #self.navigationItem.title = str(webView.title)
     #self.navigationItem.prompt = str(webView.title)
     title = webView.title
-    self.navigationItem.title = str(title)
+    #self.navigationItem.title = str(title)
     #self.navigationItem.setPrompt_(str(title))
     # todo: observe でtitle 変化の監視をしてるため不要
     #pdbr.state(self.navigationItem)
@@ -357,17 +312,8 @@ class WebViewController(UIViewController):
     pass
 
   @objc_method
-  def menuHandler_(self, _action: ctypes.c_void_p) -> None:
-    action = ObjCInstance(_action)
-    print(f'Menu Action "{action.title}"')
-
-  # MARK: - Actions
-  @objc_method
-  def barButtonItemClicked_(self, barButtonItem):
-    print(
-      f'A bar button item on the default toolbar was clicked: {barButtonItem}.'
-    )
-
+  def doneButtonTapped_(self, sender):
+    self.dismissViewControllerAnimated_completion_(True, None)
 
 
 if __name__ == '__main__':
