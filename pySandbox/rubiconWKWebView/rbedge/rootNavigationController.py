@@ -30,12 +30,14 @@ class RootNavigationController(UINavigationController):
   def loadView(self):
     send_super(__class__, self, 'loadView')
     #print(f'{NSStringFromClass(__class__)}: loadView')
+    
 
   @objc_method
   def viewDidLoad(self):
     send_super(__class__, self, 'viewDidLoad')
     #print(f'{NSStringFromClass(__class__)}: viewDidLoad')
     self.delegate = self
+    self.setToolbarHidden_animated_(False, True)
 
   @objc_method
   def viewWillAppear_(self, animated: bool):

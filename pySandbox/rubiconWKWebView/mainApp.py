@@ -43,8 +43,9 @@ class WebViewController(UIViewController):
   @objc_method
   def dealloc(self):
     # xxx: 呼ばない-> `send_super(__class__, self, 'dealloc')`
-    self.wkWebView.removeObserver_forKeyPath_(self, at('title'))
+    #self.wkWebView.removeObserver_forKeyPath_(self, at('title'))
     #print(f'- {NSStringFromClass(__class__)}: dealloc')
+    pass
 
   @objc_method
   def init(self):
@@ -86,6 +87,9 @@ class WebViewController(UIViewController):
     wkWebView.navigationDelegate = self
 
     wkWebView.scrollView.bounces = True
+    
+    #arrow.clockwise.circle
+    #multiply.circle
 
     refreshButtonItem = UIBarButtonItem.alloc().initWithBarButtonSystemItem(
       UIBarButtonSystemItem.refresh, target=self, action=SEL('reLoadWebView:'))
@@ -99,9 +103,11 @@ class WebViewController(UIViewController):
     wkWebView.loadFileURL_allowingReadAccessToURL_(self.indexPath,
                                                    self.folderPath)
 
+    '''
     # todo: (.js 等での) `title` 変化を監視
     wkWebView.addObserver_forKeyPath_options_context_(
       self, at('title'), NSKeyValueObservingOptions.new, None)
+    '''
     self.wkWebView = wkWebView
 
   @objc_method
@@ -212,13 +218,14 @@ class WebViewController(UIViewController):
   def refreshWebView_(self, sender):
     self.reLoadWebView_(sender)
     sender.endRefreshing()
-
+  '''
   @objc_method
   def observeValueForKeyPath_ofObject_change_context_(self, keyPath, objct,
                                                       change, context):
     title = self.wkWebView.title
     #self.navigationItem.prompt = str(title)
     self.navigationItem.title = str(title)
+  '''
 
   # --- WKUIDelegate
   # --- WKNavigationDelegate
@@ -249,10 +256,11 @@ class WebViewController(UIViewController):
     #self.navigationItem.title = str(webView.title)
     #self.navigationItem.prompt = str(webView.title)
     title = webView.title
-    self.navigationItem.setPrompt_(str(title))
+    self.navigationItem.title = str(title)
+    #self.navigationItem.setPrompt_(str(title))
     # todo: observe でtitle 変化の監視をしてるため不要
     #pdbr.state(self.navigationItem)
-    pass
+    #pass
 
   @objc_method
   def webView_didReceiveServerRedirectForProvisionalNavigation_(
@@ -276,7 +284,7 @@ if __name__ == '__main__':
   save_path = Path('./src/outLogs/wkLog.js')
 
   main_vc = WebViewController.alloc().initWithIndexPath_(index_path)
-  main_vc.savePath = save_path
+  #main_vc.savePath = save_path
 
   presentation_style = UIModalPresentationStyle.fullScreen
   #presentation_style = UIModalPresentationStyle.pageSheet
