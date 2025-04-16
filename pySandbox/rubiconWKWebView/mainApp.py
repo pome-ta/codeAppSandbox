@@ -129,9 +129,11 @@ class WebViewController(UIViewController):
     navigationContainer.setNavigationBarHidden_(True)
     navigationContainer.setToolbarHidden_animated_(False, True)
 
+    '''
     self.addChildViewController_(navigationContainer)
     self.view.addSubview_(navigationContainer.view)
     navigationContainer.didMoveToParentViewController_(self)
+    '''
 
     # xxx: 変数化してあげた方が、表示速度速い?
     self.toolbar = navigationContainer.toolbar
@@ -210,6 +212,11 @@ class WebViewController(UIViewController):
       self.wkWebView.heightAnchor.constraintEqualToAnchor_multiplier_(
         areaLayoutGuide.heightAnchor, 1.0),
     ])
+    
+    self.addChildViewController_(self.navigationContainer)
+    self.view.addSubview_(self.navigationContainer.view)
+    self.navigationContainer.didMoveToParentViewController_(self)
+    
 
   @objc_method
   def viewWillAppear_(self, animated: bool):
