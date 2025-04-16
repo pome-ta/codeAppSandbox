@@ -37,7 +37,7 @@ class RootNavigationController(UINavigationController):
     send_super(__class__, self, 'viewDidLoad')
     #print(f'{NSStringFromClass(__class__)}: viewDidLoad')
     self.delegate = self
-    self.setToolbarHidden_animated_(False, True)
+    #self.setToolbarHidden_animated_(False, True)
 
   @objc_method
   def viewWillAppear_(self, animated: bool):
@@ -104,6 +104,9 @@ class RootNavigationController(UINavigationController):
     visibleViewController = navigationController.visibleViewController
     navigationItem = visibleViewController.navigationItem
     navigationItem.leftBarButtonItem = closeButtonItem
+    #navigationController.toolbar.setToolbarItems_animated_([closeButtonItem,], True)
+    #navigationController.toolbar.setItems_animated_([closeButtonItem,], True)
+    #pdbr.state(navigationController.toolbar)
     
     
 

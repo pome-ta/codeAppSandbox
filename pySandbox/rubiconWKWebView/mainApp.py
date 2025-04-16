@@ -14,14 +14,23 @@ from rbedge.enumerations import (
   NSKeyValueObservingOptions,
 )
 from rbedge.makeZero import CGRectZero
+
+
 from rbedge.functions import NSStringFromClass
 from rbedge import pdbr
-
-
 
 UIViewController = ObjCClass('UIViewController')
 NSLayoutConstraint = ObjCClass('NSLayoutConstraint')
 UIColor = ObjCClass('UIColor')
+
+UINavigationController = ObjCClass('UINavigationController')
+
+UIToolbar = ObjCClass('UIToolbar')  # todo: 型
+UIToolbarAppearance = ObjCClass('UIToolbarAppearance')
+UIBarButtonItem = ObjCClass('UIBarButtonItem')
+UIImage = ObjCClass('UIImage')
+UIMenu = ObjCClass('UIMenu')
+UIAction = ObjCClass('UIAction')
 
 NSURL = ObjCClass('NSURL')
 
@@ -39,6 +48,9 @@ class WebViewController(UIViewController):
   indexPath: NSURL = objc_property()
   folderPath: NSURL = objc_property()
   savePath: Path = objc_property(ctypes.py_object)
+  
+  toolbar: UIToolbar = objc_property()
+  navigationContainer: UINavigationController = objc_property()
 
   @objc_method
   def dealloc(self):
@@ -73,6 +85,7 @@ class WebViewController(UIViewController):
   def loadView(self):
     send_super(__class__, self, 'loadView')
     #print(f'\t{NSStringFromClass(__class__)}: loadView')
+    # --- WKWebView set up
     webConfiguration = WKWebViewConfiguration.new()
     websiteDataStore = WKWebsiteDataStore.nonPersistentDataStore()
 
@@ -87,7 +100,7 @@ class WebViewController(UIViewController):
     wkWebView.navigationDelegate = self
 
     wkWebView.scrollView.bounces = True
-    
+
     #arrow.clockwise.circle
     #multiply.circle
 
@@ -102,12 +115,30 @@ class WebViewController(UIViewController):
 
     wkWebView.loadFileURL_allowingReadAccessToURL_(self.indexPath,
                                                    self.folderPath)
-
     '''
     # todo: (.js 等での) `title` 変化を監視
     wkWebView.addObserver_forKeyPath_options_context_(
       self, at('title'), NSKeyValueObservingOptions.new, None)
     '''
+    
+    # --- UIToolbar set up
+    navigationContainer = UINavigationController.alloc(
+    ).initWithNavigationBarClass_toolbarClass_(None, None)
+    # todo: `setToolbarHidden` は先に指定
+    # xxx: `setItems` 後だと、items 出てこない
+    navigationContainer.setNavigationBarHidden_(True)
+    navigationContainer.setToolbarHidden_animated_(False, True)
+
+    self.addChildViewController_(navigationContainer)
+    self.view.addSubview_(navigationContainer.view)
+    navigationContainer.didMoveToParentViewController_(self)
+
+    # xxx: 変数化してあげた方が、表示速度速い?
+    self.toolbar = navigationContainer.toolbar
+    self.navigationContainer = navigationContainer
+    
+    
+    #pdbr.state(self)
     self.wkWebView = wkWebView
 
   @objc_method
@@ -119,6 +150,48 @@ class WebViewController(UIViewController):
     self.navigationItem.title = NSStringFromClass(__class__) if (
       title := self.navigationItem.title) is None else title
 
+    # --- toolbarAppearance setup
+    toolbarAppearance = UIToolbarAppearance.new()
+    toolbarAppearance.configureWithDefaultBackground()
+    #toolbarAppearance.configureWithOpaqueBackground()
+    #toolbarAppearance.configureWithTransparentBackground()
+
+    self.toolbar.standardAppearance = toolbarAppearance
+    self.toolbar.scrollEdgeAppearance = toolbarAppearance
+    self.toolbar.compactAppearance = toolbarAppearance
+    self.toolbar.compactScrollEdgeAppearance = toolbarAppearance
+
+    # MARK: - UIBarButtonItem Creation and Configuration
+    trashBarButtonItem = UIBarButtonItem.alloc().initWithBarButtonSystemItem(
+      UIBarButtonSystemItem.trash,
+      target=self,
+      action=SEL('barButtonItemClicked:'))
+
+    flexibleSpaceBarButtonItem = UIBarButtonItem.alloc(
+    ).initWithBarButtonSystemItem(UIBarButtonSystemItem.flexibleSpace,
+                                  target=None,
+                                  action=None)
+
+    buttonMenu = UIMenu.menuWithTitle_children_('', [
+      UIAction.actionWithTitle_image_identifier_handler_(
+        f'Option {i + 1}', None, None,
+        Block(self.menuHandler_, None, ctypes.c_void_p)) for i in range(5)
+    ])
+    customTitleBarButtonItem = UIBarButtonItem.alloc().initWithImage_menu_(
+      UIImage.systemImageNamed('list.number'), buttonMenu)
+
+    toolbarButtonItems = [
+      trashBarButtonItem,
+      flexibleSpaceBarButtonItem,
+      customTitleBarButtonItem,
+    ]
+
+    self.toolbar.setItems_animated_(toolbarButtonItems, True)
+
+    
+    
+    
+    
     # --- Layout
     self.view.addSubview_(self.wkWebView)
     self.wkWebView.translatesAutoresizingMaskIntoConstraints = False
@@ -218,6 +291,7 @@ class WebViewController(UIViewController):
   def refreshWebView_(self, sender):
     self.reLoadWebView_(sender)
     sender.endRefreshing()
+
   '''
   @objc_method
   def observeValueForKeyPath_ofObject_change_context_(self, keyPath, objct,
@@ -274,6 +348,19 @@ class WebViewController(UIViewController):
     # ページ読み込みが開始された時
     #print('didStartProvisionalNavigation')
     pass
+
+  @objc_method
+  def menuHandler_(self, _action: ctypes.c_void_p) -> None:
+    action = ObjCInstance(_action)
+    print(f'Menu Action "{action.title}"')
+
+  # MARK: - Actions
+  @objc_method
+  def barButtonItemClicked_(self, barButtonItem):
+    print(
+      f'A bar button item on the default toolbar was clicked: {barButtonItem}.'
+    )
+
 
 
 if __name__ == '__main__':
