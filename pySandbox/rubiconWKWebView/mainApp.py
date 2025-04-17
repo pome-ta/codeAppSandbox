@@ -6,7 +6,6 @@ from pyrubicon.objc.api import ObjCClass, ObjCInstance, Block
 from pyrubicon.objc.api import objc_method, objc_property, at
 from pyrubicon.objc.runtime import send_super, objc_id, SEL
 
-
 from rbedge.enumerations import (
   NSURLRequestCachePolicy,
   UIControlEvents,
@@ -131,7 +130,7 @@ class WebViewController(UIViewController):
 
     self.navigationController.setNavigationBarHidden_animated_(True, True)
     self.navigationController.setToolbarHidden_animated_(False, True)
-    self.navigationController.setHidesBarsOnSwipe_(True)
+    #self.navigationController.setHidesBarsOnSwipe_(True)
 
     #visibleViewController = self.navigationController.visibleViewController
     self.setToolbarItems_animated_(toolbarButtonItems, True)
@@ -157,9 +156,9 @@ class WebViewController(UIViewController):
     self.view.addSubview_(self.wkWebView)
     self.wkWebView.translatesAutoresizingMaskIntoConstraints = False
 
-    areaLayoutGuide = self.view.safeAreaLayoutGuide
+    #areaLayoutGuide = self.view.safeAreaLayoutGuide
     #areaLayoutGuide = self.view.layoutMarginsGuide
-    #areaLayoutGuide = self.view
+    areaLayoutGuide = self.view
 
     NSLayoutConstraint.activateConstraints_([
       self.wkWebView.centerXAnchor.constraintEqualToAnchor_(
@@ -245,7 +244,6 @@ class WebViewController(UIViewController):
 
   @objc_method
   def reLoadWebView_(self, sender):
-    print('h')
     self.wkWebView.reload()
     #self.wkWebView.reloadFromOrigin()
 
