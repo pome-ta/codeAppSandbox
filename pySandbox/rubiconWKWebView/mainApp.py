@@ -30,10 +30,13 @@ WKWebsiteDataStore = ObjCClass('WKWebsiteDataStore')
 UIRefreshControl = ObjCClass('UIRefreshControl')
 UIBarButtonItem = ObjCClass('UIBarButtonItem')
 
+UILabel = ObjCClass('UILabel')
+
 
 class WebViewController(UIViewController):
 
   wkWebView: WKWebView = objc_property()
+  titleLabel:UILabel=objc_property()
   indexPath: NSURL = objc_property()
   folderPath: NSURL = objc_property()
   savePath: Path = objc_property(ctypes.py_object)
@@ -116,11 +119,26 @@ class WebViewController(UIViewController):
 
     #done
     #plain
+    '''
     titleButtonItem = UIBarButtonItem.alloc().initWithTitle(
       'hogeaaaaaaaa',
       style=UIBarButtonItemStyle.done,
       target=None,
       action=None)
+    '''
+      
+    #titleButtonItem = UIBarButtonItem.alloc().initWithTitle('hogeaaaaaaaa',menu=None)
+      
+
+      
+    titleLabel = UILabel.new()
+    titleLabel.setText_('hogeeeeeeeeeee\nfugaaaaaaaaaaaaaaaaa')
+    titleLabel.backgroundColor = UIColor.systemDarkRedColor()
+    
+    pdbr.state(titleLabel)
+    titleButtonItem = UIBarButtonItem.alloc().initWithCustomView_(titleLabel)
+    
+    
 
     flexibleSpaceBarButtonItem = UIBarButtonItem.alloc(
     ).initWithBarButtonSystemItem(UIBarButtonSystemItem.flexibleSpace,
@@ -135,14 +153,17 @@ class WebViewController(UIViewController):
     toolbarButtonItems = [
       closeButtonItem,
       #fixedSpaceBarButtonItem,
-      saveButtonItem,
+      #saveButtonItem,
       flexibleSpaceBarButtonItem,
+      #fixedSpaceBarButtonItem,
       titleButtonItem,
       flexibleSpaceBarButtonItem,
+      #fixedSpaceBarButtonItem,
       refreshButtonItem,
     ]
 
-    pdbr.state(closeButtonItem)
+    #pdbr.state(closeButtonItem)
+    #initWithCustomView
 
     self.navigationController.setNavigationBarHidden_animated_(True, True)
     self.navigationController.setToolbarHidden_animated_(False, True)
@@ -157,7 +178,7 @@ class WebViewController(UIViewController):
     #print(toolbar.items)
     #print(visibleViewController)
     #pdbr.state(self.navigationController.toolbar)
-
+    self.titleLabel = titleLabel
     self.wkWebView = wkWebView
 
   @objc_method
@@ -200,6 +221,8 @@ class WebViewController(UIViewController):
         areaLayoutGuide.heightAnchor, 1.0),
     ])
     '''
+    
+    
 
   @objc_method
   def viewWillAppear_(self, animated: bool):
@@ -320,6 +343,7 @@ class WebViewController(UIViewController):
     #self.navigationItem.title = str(webView.title)
     #self.navigationItem.prompt = str(webView.title)
     title = webView.title
+    #self.titleLabel.setText_(str(title))
     #self.navigationItem.title = str(title)
     #self.navigationItem.setPrompt_(str(title))
     # todo: observe でtitle 変化の監視をしてるため不要
