@@ -103,7 +103,7 @@ class RootNavigationController(UINavigationController):
   def navigationController_willShowViewController_animated_(
       self, navigationController, viewController, animated: bool):
     # xxx: layout 範囲の制限
-    extendedLayout = UIRectEdge.none
+    #extendedLayout = UIRectEdge.none
     #viewController.setEdgesForExtendedLayout_(extendedLayout)
     
 

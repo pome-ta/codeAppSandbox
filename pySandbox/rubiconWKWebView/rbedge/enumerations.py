@@ -32,6 +32,7 @@ class UIBarButtonSystemItem:
   done: int = 0
   cancel: int = 1
   edit: int = 2
+  save: int = 3
   add: int = 4
   flexibleSpace: int = 5
   fixedSpace: int = 6
@@ -43,6 +44,7 @@ class UIBarButtonSystemItem:
   search: int = 12
   refresh: int = 13
   stop: int = 14
+  camera: int = 15
   trash: int = 16
   play: int = 17
   pause: int = 18
@@ -52,6 +54,15 @@ class UIBarButtonSystemItem:
   redo: int = 22
   pageCurl: int = 23  # Deprecated
   close: int = 24
+  writingTools: int = 25
+
+
+# ref: [UIBarButtonItemStyle | Apple Developer Documentation](https://developer.apple.com/documentation/uikit/uibarbuttonitem/style-swift.enum?language=objc)
+class UIBarButtonItemStyle:
+  # ref: [UIBarButtonItem.rs - source](https://docs.rs/objc2-ui-kit/latest/src/objc2_ui_kit/generated/UIBarButtonItem.rs.html#14)
+  plain: int = 0
+  bordered: int = 1  # Deprecated
+  done: int = 2
 
 
 # ref: [UISceneActivationState | Apple Developer Documentation](https://developer.apple.com/documentation/uikit/uiscene/activationstate-swift.enum?language=objc)

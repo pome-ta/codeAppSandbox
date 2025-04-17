@@ -10,7 +10,6 @@ from rbedge.enumerations import (
   NSURLRequestCachePolicy,
   UIControlEvents,
   UIBarButtonSystemItem,
-  UIBarButtonItemStyle,
   NSKeyValueObservingOptions,
 )
 from rbedge.makeZero import CGRectZero
@@ -107,42 +106,27 @@ class WebViewController(UIViewController):
     #self.navigationItem.rightBarButtonItem = refreshButtonItem
 
     saveButtonItem = UIBarButtonItem.alloc().initWithBarButtonSystemItem(
-      UIBarButtonSystemItem.save, target=self, action=SEL('doneButtonTapped:'))
+      UIBarButtonSystemItem.close,
+      target=self,
+      action=SEL('doneButtonTapped:'))
 
     closeButtonItem = UIBarButtonItem.alloc().initWithBarButtonSystemItem(
       UIBarButtonSystemItem.close,
       target=self,
       action=SEL('doneButtonTapped:'))
 
-    #done
-    #plain
-    titleButtonItem = UIBarButtonItem.alloc().initWithTitle(
-      'hogeaaaaaaaa',
-      style=UIBarButtonItemStyle.done,
-      target=None,
-      action=None)
-
     flexibleSpaceBarButtonItem = UIBarButtonItem.alloc(
     ).initWithBarButtonSystemItem(UIBarButtonSystemItem.flexibleSpace,
                                   target=None,
                                   action=None)
-    fixedSpaceBarButtonItem = UIBarButtonItem.alloc(
-    ).initWithBarButtonSystemItem(UIBarButtonSystemItem.fixedSpace,
-                                  target=None,
-                                  action=None)
 
-    titleButtonItem.setTitle_('closeButtonItem')
     toolbarButtonItems = [
       closeButtonItem,
-      #fixedSpaceBarButtonItem,
-      saveButtonItem,
-      flexibleSpaceBarButtonItem,
-      titleButtonItem,
       flexibleSpaceBarButtonItem,
       refreshButtonItem,
+      flexibleSpaceBarButtonItem,
+      saveButtonItem,
     ]
-
-    pdbr.state(closeButtonItem)
 
     self.navigationController.setNavigationBarHidden_animated_(True, True)
     self.navigationController.setToolbarHidden_animated_(False, True)
@@ -167,26 +151,32 @@ class WebViewController(UIViewController):
 
     # --- Navigation
     #self.navigationItem.title = NSStringFromClass(__class__) if (title := self.navigationItem.title) is None else title
-    #self.view.backgroundColor = UIColor.systemBackgroundColor()
-    self.view.backgroundColor = UIColor.systemDarkRedColor()
 
     # --- Layout
     self.view.addSubview_(self.wkWebView)
     self.wkWebView.translatesAutoresizingMaskIntoConstraints = False
 
-    #areaLayoutGuide = self.view.safeAreaLayoutGuide
+    areaLayoutGuide = self.view.safeAreaLayoutGuide
     #areaLayoutGuide = self.view.layoutMarginsGuide
-    areaLayoutGuide = self.view
+    #areaLayoutGuide = self.view
+    
+    #pdbr.state(self)
+    #pdbr.state(areaLayoutGuide)
+    #topAnchor
+    #bottomAnchor
+    #leadingAnchor
+    #trailingAnchor
+    #leftAnchor
+    #rightAnchor
 
+    
     NSLayoutConstraint.activateConstraints_([
       self.wkWebView.topAnchor.constraintEqualToAnchor_(
         self.view.safeAreaLayoutGuide.topAnchor),
-      #self.view.topAnchor),
       self.wkWebView.bottomAnchor.constraintEqualToAnchor_(
         self.view.bottomAnchor),
       self.wkWebView.leftAnchor.constraintEqualToAnchor_(self.view.leftAnchor),
-      self.wkWebView.rightAnchor.constraintEqualToAnchor_(
-        self.view.rightAnchor),
+      self.wkWebView.rightAnchor.constraintEqualToAnchor_(self.view.rightAnchor),
     ])
     '''
     NSLayoutConstraint.activateConstraints_([
