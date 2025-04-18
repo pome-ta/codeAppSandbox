@@ -48,9 +48,8 @@ class WebViewController(UIViewController):
   @objc_method
   def dealloc(self):
     # xxx: 呼ばない-> `send_super(__class__, self, 'dealloc')`
-    #self.wkWebView.removeObserver_forKeyPath_(self, at('title'))
     #print(f'- {NSStringFromClass(__class__)}: dealloc')
-    pass
+    self.wkWebView.removeObserver_forKeyPath_(self, at('title'))
 
   @objc_method
   def init(self):
@@ -78,11 +77,7 @@ class WebViewController(UIViewController):
   def loadView(self):
     send_super(__class__, self, 'loadView')
     #print(f'\t{NSStringFromClass(__class__)}: loadView')
-    
-    
-    
-    
-    
+
     # --- WKWebView set up
     webConfiguration = WKWebViewConfiguration.new()
     websiteDataStore = WKWebsiteDataStore.nonPersistentDataStore()
@@ -99,8 +94,6 @@ class WebViewController(UIViewController):
 
     wkWebView.scrollView.bounces = True
 
-
-
     refreshControl = UIRefreshControl.new()
     refreshControl.addTarget_action_forControlEvents_(
       self, SEL('refreshWebView:'), UIControlEvents.valueChanged)
@@ -108,30 +101,37 @@ class WebViewController(UIViewController):
 
     wkWebView.loadFileURL_allowingReadAccessToURL_(self.indexPath,
                                                    self.folderPath)
-    '''
+
     # todo: (.js 等での) `title` 変化を監視
     wkWebView.addObserver_forKeyPath_options_context_(
       self, at('title'), NSKeyValueObservingOptions.new, None)
-    '''
-    
+
     # --- toolbar set up
     #arrow.clockwise.circle
     #multiply.circle
     #arrow.down.to.line.circle
     #circle.badge.checkmark
-    
+
     #initWithImage:style:target:action:
-    
+
     #refreshButtonItem = UIBarButtonItem.alloc().initWithBarButtonSystemItem(UIBarButtonSystemItem.refresh, target=self, action=SEL('reLoadWebView:'))
     #self.navigationItem.rightBarButtonItem = refreshButtonItem
-    refreshButtonItem = UIBarButtonItem.alloc().initWithImage(UIImage.systemImageNamed_('arrow.clockwise.circle'), style=UIBarButtonItemStyle.plain,target=self, action=SEL('reLoadWebView:'))
+    refreshButtonItem = UIBarButtonItem.alloc().initWithImage(
+      UIImage.systemImageNamed_('arrow.clockwise.circle'),
+      style=UIBarButtonItemStyle.plain,
+      target=self,
+      action=SEL('reLoadWebView:'))
 
     saveButtonItem = UIBarButtonItem.alloc().initWithBarButtonSystemItem(
       UIBarButtonSystemItem.save, target=self, action=SEL('doneButtonTapped:'))
 
     #closeButtonItem = UIBarButtonItem.alloc().initWithBarButtonSystemItem(UIBarButtonSystemItem.close,target=self,action=SEL('doneButtonTapped:'))
-    
-    closeButtonItem = UIBarButtonItem.alloc().initWithImage(UIImage.systemImageNamed_('multiply.circle'),style=UIBarButtonItemStyle.plain,target=self,action=SEL('doneButtonTapped:'))
+
+    closeButtonItem = UIBarButtonItem.alloc().initWithImage(
+      UIImage.systemImageNamed_('multiply.circle'),
+      style=UIBarButtonItemStyle.plain,
+      target=self,
+      action=SEL('doneButtonTapped:'))
 
     #done
     #plain
@@ -146,14 +146,16 @@ class WebViewController(UIViewController):
     #titleButtonItem = UIBarButtonItem.alloc().initWithTitle('hogeaaaaaaaa',menu=None)
 
     titleLabel = UILabel.new()
-    titleLabel.setFrame_(CGRectMake(0.0, 0.0, 600.0, 800.0))
+    #titleLabel.setFrame_(CGRectMake(0.0, 0.0, 600.0, 800.0))
     #titleLabel.drawTextInRect_(CGRectMake(0.0,0.0,200.0,400.0))
     titleLabel.setText_('hogeeeeeeeeeee\nfugaaaaaaaaaaaaaaaaa')
+    titleLabel.setAdjustsFontSizeToFitWidth_(True)
+    #setAutoresizingMask
     titleLabel.backgroundColor = UIColor.systemDarkRedColor()
 
     #drawTextInRect_
 
-    pdbr.state(saveButtonItem)
+    
     titleButtonItem = UIBarButtonItem.alloc().initWithCustomView_(titleLabel)
 
     flexibleSpaceBarButtonItem = UIBarButtonItem.alloc(
@@ -270,6 +272,7 @@ class WebViewController(UIViewController):
                  ctypes.c_bool,
                ])
     # print(f'\t{NSStringFromClass(__class__)}: viewWillDisappear_')
+    pdbr.state(self.titleLabel)
 
     if self.savePath is None or not (self.savePath.exists()):
       return
@@ -319,14 +322,12 @@ class WebViewController(UIViewController):
     self.reLoadWebView_(sender)
     sender.endRefreshing()
 
-  '''
   @objc_method
   def observeValueForKeyPath_ofObject_change_context_(self, keyPath, objct,
                                                       change, context):
     title = self.wkWebView.title
-    #self.navigationItem.prompt = str(title)
-    self.navigationItem.title = str(title)
-  '''
+    self.titleLabel.setText_(str(title))
+    #self.titleLabel.setAdjustsLetterSpacingToFitWidth_(True)
 
   # --- WKUIDelegate
   # --- WKNavigationDelegate
@@ -353,16 +354,7 @@ class WebViewController(UIViewController):
   @objc_method
   def webView_didFinishNavigation_(self, webView, navigation):
     # ページ読み込みが完了した時
-    #print('didFinishNavigation')
-    #self.navigationItem.title = str(webView.title)
-    #self.navigationItem.prompt = str(webView.title)
-    title = webView.title
-    #self.titleLabel.setText_(str(title))
-    #self.navigationItem.title = str(title)
-    #self.navigationItem.setPrompt_(str(title))
-    # todo: observe でtitle 変化の監視をしてるため不要
-    #pdbr.state(self.navigationItem)
-    #pass
+    pass
 
   @objc_method
   def webView_didReceiveServerRedirectForProvisionalNavigation_(

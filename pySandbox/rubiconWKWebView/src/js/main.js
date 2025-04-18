@@ -3,7 +3,7 @@
 
 console.log(1);
 
-document.title = 'js top title';
+document.title = 'js top title title title title title title title title title title';
 
 function addElement() {
   // 新しい div 要素を作成します
@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
 window.addEventListener('load', (event) => {
   console.log(3);
-  document.title = 'js load title';
+  document.title = 'js load titletitle title title title title title title title title title';
   const logDiv = document.getElementById('logDiv');
   const textContent = logDiv.textContent;
   console.log(textContent);
