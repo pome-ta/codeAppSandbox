@@ -135,3 +135,15 @@ class NSKeyValueObservingOptions:
   initial: int = 0x04
   prior: int = 0x08
 
+
+# ref: [UIViewAutoresizing | Apple Developer Documentation](https://developer.apple.com/documentation/uikit/uiview/autoresizingmask-swift.struct?language=objc)
+class UIViewAutoresizing:
+  # ref: [UIView.rs - source](https://docs.rs/objc2-ui-kit/latest/src/objc2_ui_kit/generated/UIView.rs.html#112-129)
+  none: int = 0
+  flexibleLeftMargin: int = 1 << 0
+  flexibleWidth: int = 1 << 1
+  flexibleRightMargin: int = 1 << 2
+  flexibleTopMargin: int = 1 << 3
+  flexibleHeight: int = 1 << 4
+  flexibleBottomMargin: int = 1 << 5
+
