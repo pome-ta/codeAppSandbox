@@ -3,20 +3,16 @@
 
 console.log(1);
 
-document.title = 'js top title title title title title title title title title title';
+//document.title = 'js top title title title title title title title title title title';
 
 function addElement() {
-  // 新しい div 要素を作成します
   const newDiv = document.createElement('div');
   newDiv.setAttribute('id','logDiv');
 
-  // いくつかの内容を与えます
   const newContent = document.createTextNode('みなさん、こんにちは!');
 
-  // テキストノードを新規作成した div に追加します
   newDiv.appendChild(newContent);
 
-  // DOM に新しく作られた要素とその内容を追加します
   const currentDiv = document.getElementById('div1');
   document.body.insertBefore(newDiv, currentDiv);
 }
@@ -29,7 +25,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
 window.addEventListener('load', (event) => {
   console.log(3);
-  document.title = 'js load titletitle title title title title title title title title title';
+  //document.title = 'js load titletitle title title title title title title title title title';
   const logDiv = document.getElementById('logDiv');
   const textContent = logDiv.textContent;
   console.log(textContent);

@@ -5,7 +5,6 @@ from typing import Union
 from pyrubicon.objc.api import ObjCClass, ObjCInstance, Block
 from pyrubicon.objc.api import objc_method, objc_property, at
 from pyrubicon.objc.runtime import send_super, objc_id, SEL
-from pyrubicon.objc.types import CGRectMake
 
 from rbedge.enumerations import (
   NSURLRequestCachePolicy,
@@ -14,10 +13,8 @@ from rbedge.enumerations import (
   UIBarButtonItemStyle,
   NSTextAlignment,
   NSKeyValueObservingOptions,
-  UIViewAutoresizing,
 )
-from rbedge.globalVariables import (
-  UIFontTextStyle, )
+from rbedge.globalVariables import UIFontTextStyle
 from rbedge.makeZero import CGRectZero
 from rbedge.functions import NSStringFromClass
 from rbedge import pdbr
@@ -27,16 +24,15 @@ NSLayoutConstraint = ObjCClass('NSLayoutConstraint')
 UIColor = ObjCClass('UIColor')
 
 NSURL = ObjCClass('NSURL')
-
 WKWebView = ObjCClass('WKWebView')
 WKWebViewConfiguration = ObjCClass('WKWebViewConfiguration')
 WKWebsiteDataStore = ObjCClass('WKWebsiteDataStore')
 
 UIRefreshControl = ObjCClass('UIRefreshControl')
 UIBarButtonItem = ObjCClass('UIBarButtonItem')
-
 UIImage = ObjCClass('UIImage')
 UILabel = ObjCClass('UILabel')
+UIFont = ObjCClass('UIFont')
 
 
 class WebViewController(UIViewController):
@@ -57,6 +53,7 @@ class WebViewController(UIViewController):
   def init(self):
     send_super(__class__, self, 'init')
     #print(f'\t{NSStringFromClass(__class__)}: init')
+
     self.savePath = None
     return self
 
@@ -69,7 +66,6 @@ class WebViewController(UIViewController):
       return self
 
     fileURLWithPath = NSURL.fileURLWithPath_isDirectory_
-
     self.indexPath = fileURLWithPath(str(target_path), False)
     self.folderPath = fileURLWithPath(str(target_path.parent), True)
 
@@ -79,6 +75,45 @@ class WebViewController(UIViewController):
   def loadView(self):
     send_super(__class__, self, 'loadView')
     #print(f'\t{NSStringFromClass(__class__)}: loadView')
+
+    # --- toolbar set up
+    #self.navigationController.setNavigationBarHidden_animated_(True, True)
+    self.navigationController.setToolbarHidden_animated_(False, True)
+
+    circleImage = UIImage.systemImageNamed_('circle.badge.checkmark')
+    saveButtonItem = UIBarButtonItem.alloc().initWithImage(
+      circleImage,
+      style=UIBarButtonItemStyle.plain,
+      target=self,
+      action=SEL('doneButtonTapped:'))
+
+    closeImage = UIImage.systemImageNamed_('multiply.circle')
+    closeButtonItem = UIBarButtonItem.alloc().initWithImage(
+      closeImage,
+      style=UIBarButtonItemStyle.plain,
+      target=self,
+      action=SEL('doneButtonTapped:'))
+
+    titleLabel = UILabel.new()
+    titleLabel.setTextAlignment_(NSTextAlignment.center)
+    titleLabel.setFont_(
+      UIFont.preferredFontForTextStyle_(UIFontTextStyle.caption1))
+
+    titleButtonItem = UIBarButtonItem.alloc().initWithCustomView_(titleLabel)
+
+    flexibleSpace = UIBarButtonSystemItem.flexibleSpace
+    flexibleSpaceBarButtonItem = UIBarButtonItem.alloc(
+    ).initWithBarButtonSystemItem(flexibleSpace, target=None, action=None)
+
+    toolbarButtonItems = [
+      saveButtonItem,
+      flexibleSpaceBarButtonItem,
+      titleButtonItem,
+      flexibleSpaceBarButtonItem,
+      closeButtonItem,
+    ]
+
+    self.setToolbarItems_animated_(toolbarButtonItems, True)
 
     # --- WKWebView set up
     webConfiguration = WKWebViewConfiguration.new()
@@ -108,100 +143,6 @@ class WebViewController(UIViewController):
     wkWebView.addObserver_forKeyPath_options_context_(
       self, at('title'), NSKeyValueObservingOptions.new, None)
 
-    # --- toolbar set up
-    #arrow.clockwise.circle
-    #multiply.circle
-    #arrow.down.to.line.circle
-    #circle.badge.checkmark
-
-    #initWithImage:style:target:action:
-
-    #refreshButtonItem = UIBarButtonItem.alloc().initWithBarButtonSystemItem(UIBarButtonSystemItem.refresh, target=self, action=SEL('reLoadWebView:'))
-    #self.navigationItem.rightBarButtonItem = refreshButtonItem
-    refreshButtonItem = UIBarButtonItem.alloc().initWithImage(
-      UIImage.systemImageNamed_('arrow.clockwise.circle'),
-      style=UIBarButtonItemStyle.plain,
-      target=self,
-      action=SEL('reLoadWebView:'))
-
-    saveButtonItem = UIBarButtonItem.alloc().initWithBarButtonSystemItem(
-      UIBarButtonSystemItem.save, target=self, action=SEL('doneButtonTapped:'))
-
-    #closeButtonItem = UIBarButtonItem.alloc().initWithBarButtonSystemItem(UIBarButtonSystemItem.close,target=self,action=SEL('doneButtonTapped:'))
-
-    closeButtonItem = UIBarButtonItem.alloc().initWithImage(
-      UIImage.systemImageNamed_('multiply.circle'),
-      style=UIBarButtonItemStyle.plain,
-      target=self,
-      action=SEL('doneButtonTapped:'))
-
-    #done
-    #plain
-    '''
-    titleButtonItem = UIBarButtonItem.alloc().initWithTitle(
-      'hogeaaaaaaaa',
-      style=UIBarButtonItemStyle.done,
-      target=None,
-      action=None)
-    '''
-
-    #titleButtonItem = UIBarButtonItem.alloc().initWithTitle('hogeaaaaaaaa',menu=None)
-
-    titleLabel = UILabel.new()
-    titleLabel.setTextAlignment_(NSTextAlignment.center)
-    #titleLabel.setFrame_(CGRectMake(0.0, 0.0, 600.0, 800.0))
-    #titleLabel.drawTextInRect_(CGRectMake(0.0,0.0,200.0,400.0))
-    #titleLabel.setText_('')
-    #titleLabel.setAdjustsFontSizeToFitWidth_(True)
-    #titleLabel.setAdjustsFontSizeToFitWidth_(True)
-    #titleLabel.sizeToFit()
-    #pdbr.state(titleLabel)
-    #titleLabel.setAutoresizingMask_(UIViewAutoresizing.flexibleWidth)
-    titleLabel.backgroundColor = UIColor.systemDarkRedColor()
-
-    #drawTextInRect_
-
-    
-    titleButtonItem = UIBarButtonItem.alloc().initWithCustomView_(titleLabel)
-
-    flexibleSpaceBarButtonItem = UIBarButtonItem.alloc(
-    ).initWithBarButtonSystemItem(UIBarButtonSystemItem.flexibleSpace,
-                                  target=None,
-                                  action=None)
-    fixedSpaceBarButtonItem = UIBarButtonItem.alloc(
-    ).initWithBarButtonSystemItem(UIBarButtonSystemItem.fixedSpace,
-                                  target=None,
-                                  action=None)
-
-    titleButtonItem.setTitle_('closeButtonItem')
-    toolbarButtonItems = [
-      closeButtonItem,
-      #fixedSpaceBarButtonItem,
-      #saveButtonItem,
-      flexibleSpaceBarButtonItem,
-      #fixedSpaceBarButtonItem,
-      titleButtonItem,
-      flexibleSpaceBarButtonItem,
-      #fixedSpaceBarButtonItem,
-      refreshButtonItem,
-    ]
-
-    #pdbr.state(closeButtonItem)
-    #initWithCustomView
-
-    self.navigationController.setNavigationBarHidden_animated_(True, True)
-    self.navigationController.setToolbarHidden_animated_(False, True)
-    #self.navigationController.setHidesBarsOnSwipe_(True)
-
-    #visibleViewController = self.navigationController.visibleViewController
-    self.setToolbarItems_animated_(toolbarButtonItems, True)
-    #toolbar.setItems_animated_([refreshButtonItem,],False)
-
-    #pdbr.state(toolbar)
-    #pdbr.state(visibleViewController)
-    #print(toolbar.items)
-    #print(visibleViewController)
-    #pdbr.state(self.navigationController.toolbar)
     self.titleLabel = titleLabel
     self.wkWebView = wkWebView
 
@@ -211,7 +152,8 @@ class WebViewController(UIViewController):
     #print(f'\t{NSStringFromClass(__class__)}: viewDidLoad')
 
     # --- Navigation
-    #self.navigationItem.title = NSStringFromClass(__class__) if (title := self.navigationItem.title) is None else title
+    self.navigationItem.title = NSStringFromClass(__class__) if (
+      title := self.navigationItem.title) is None else title
     #self.view.backgroundColor = UIColor.systemBackgroundColor()
     self.view.backgroundColor = UIColor.systemDarkRedColor()
 
@@ -219,32 +161,15 @@ class WebViewController(UIViewController):
     self.view.addSubview_(self.wkWebView)
     self.wkWebView.translatesAutoresizingMaskIntoConstraints = False
 
-    #areaLayoutGuide = self.view.safeAreaLayoutGuide
-    #areaLayoutGuide = self.view.layoutMarginsGuide
-    areaLayoutGuide = self.view
-
     NSLayoutConstraint.activateConstraints_([
       self.wkWebView.topAnchor.constraintEqualToAnchor_(
         self.view.safeAreaLayoutGuide.topAnchor),
-      #self.view.topAnchor),
       self.wkWebView.bottomAnchor.constraintEqualToAnchor_(
         self.view.bottomAnchor),
       self.wkWebView.leftAnchor.constraintEqualToAnchor_(self.view.leftAnchor),
       self.wkWebView.rightAnchor.constraintEqualToAnchor_(
         self.view.rightAnchor),
     ])
-    '''
-    NSLayoutConstraint.activateConstraints_([
-      self.wkWebView.centerXAnchor.constraintEqualToAnchor_(
-        areaLayoutGuide.centerXAnchor),
-      self.wkWebView.centerYAnchor.constraintEqualToAnchor_(
-        areaLayoutGuide.centerYAnchor),
-      self.wkWebView.widthAnchor.constraintEqualToAnchor_multiplier_(
-        areaLayoutGuide.widthAnchor, 1.0),
-      self.wkWebView.heightAnchor.constraintEqualToAnchor_multiplier_(
-        areaLayoutGuide.heightAnchor, 1.0),
-    ])
-    '''
 
   @objc_method
   def viewWillAppear_(self, animated: bool):
@@ -278,7 +203,6 @@ class WebViewController(UIViewController):
                  ctypes.c_bool,
                ])
     # print(f'\t{NSStringFromClass(__class__)}: viewWillDisappear_')
-    #pdbr.state(self.titleLabel)
 
     if self.savePath is None or not (self.savePath.exists()):
       return
@@ -317,24 +241,6 @@ class WebViewController(UIViewController):
   def didReceiveMemoryWarning(self):
     send_super(__class__, self, 'didReceiveMemoryWarning')
     print(f'{__class__}: didReceiveMemoryWarning')
-
-  @objc_method
-  def reLoadWebView_(self, sender):
-    self.wkWebView.reload()
-    #self.wkWebView.reloadFromOrigin()
-
-  @objc_method
-  def refreshWebView_(self, sender):
-    self.reLoadWebView_(sender)
-    sender.endRefreshing()
-
-  @objc_method
-  def observeValueForKeyPath_ofObject_change_context_(self, keyPath, objct,
-                                                      change, context):
-    title = self.wkWebView.title
-    self.titleLabel.setText_(str(title))
-    self.titleLabel.sizeToFit()
-    #self.titleLabel.setAdjustsLetterSpacingToFitWidth_(True)
 
   # --- WKUIDelegate
   # --- WKNavigationDelegate
@@ -381,6 +287,23 @@ class WebViewController(UIViewController):
     #pdbr.state(self.navigationController.navigationBar)
     self.dismissViewControllerAnimated_completion_(True, None)
 
+  @objc_method
+  def reLoadWebView_(self, sender):
+    self.wkWebView.reload()
+    #self.wkWebView.reloadFromOrigin()
+
+  @objc_method
+  def refreshWebView_(self, sender):
+    self.reLoadWebView_(sender)
+    sender.endRefreshing()
+
+  @objc_method
+  def observeValueForKeyPath_ofObject_change_context_(self, keyPath, objct,
+                                                      change, context):
+    title = self.wkWebView.title
+    self.titleLabel.setText_(str(title))
+    self.titleLabel.sizeToFit()
+
 
 if __name__ == '__main__':
   from rbedge.app import App
@@ -392,8 +315,8 @@ if __name__ == '__main__':
   main_vc = WebViewController.alloc().initWithIndexPath_(index_path)
   #main_vc.savePath = save_path
 
-  presentation_style = UIModalPresentationStyle.fullScreen
-  #presentation_style = UIModalPresentationStyle.pageSheet
+  #presentation_style = UIModalPresentationStyle.fullScreen
+  presentation_style = UIModalPresentationStyle.pageSheet
 
   app = App(main_vc, presentation_style)
   app.present()
