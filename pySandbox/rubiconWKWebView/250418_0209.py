@@ -5,7 +5,7 @@ from typing import Union
 from pyrubicon.objc.api import ObjCClass, ObjCInstance, Block
 from pyrubicon.objc.api import objc_method, objc_property, at
 from pyrubicon.objc.runtime import send_super, objc_id, SEL
-from pyrubicon.objc.types import CGRectMake
+from pyrubicon.objc.types import CGRect, CGRectMake
 
 from rbedge.enumerations import (
   NSURLRequestCachePolicy,
@@ -14,8 +14,6 @@ from rbedge.enumerations import (
   UIBarButtonItemStyle,
   NSKeyValueObservingOptions,
 )
-from rbedge.globalVariables import (
-  UIFontTextStyle, )
 from rbedge.makeZero import CGRectZero
 from rbedge.functions import NSStringFromClass
 from rbedge import pdbr
@@ -33,7 +31,6 @@ WKWebsiteDataStore = ObjCClass('WKWebsiteDataStore')
 UIRefreshControl = ObjCClass('UIRefreshControl')
 UIBarButtonItem = ObjCClass('UIBarButtonItem')
 
-UIImage = ObjCClass('UIImage')
 UILabel = ObjCClass('UILabel')
 
 
@@ -61,7 +58,7 @@ class WebViewController(UIViewController):
 
   @objc_method
   def initWithIndexPath_(self, index_path: ctypes.py_object):
-    self.init()
+    self.init()  #send_super(__class__, self, 'init')
     #print(f'\t{NSStringFromClass(__class__)}: initWithTargetURL_')
 
     if not ((target_path := Path(index_path)).exists()):
@@ -78,11 +75,6 @@ class WebViewController(UIViewController):
   def loadView(self):
     send_super(__class__, self, 'loadView')
     #print(f'\t{NSStringFromClass(__class__)}: loadView')
-    
-    
-    
-    
-    
     # --- WKWebView set up
     webConfiguration = WKWebViewConfiguration.new()
     websiteDataStore = WKWebsiteDataStore.nonPersistentDataStore()
@@ -99,7 +91,8 @@ class WebViewController(UIViewController):
 
     wkWebView.scrollView.bounces = True
 
-
+    #arrow.clockwise.circle
+    #multiply.circle
 
     refreshControl = UIRefreshControl.new()
     refreshControl.addTarget_action_forControlEvents_(
@@ -113,25 +106,17 @@ class WebViewController(UIViewController):
     wkWebView.addObserver_forKeyPath_options_context_(
       self, at('title'), NSKeyValueObservingOptions.new, None)
     '''
-    
-    # --- toolbar set up
-    #arrow.clockwise.circle
-    #multiply.circle
-    #arrow.down.to.line.circle
-    #circle.badge.checkmark
-    
-    #initWithImage:style:target:action:
-    
-    #refreshButtonItem = UIBarButtonItem.alloc().initWithBarButtonSystemItem(UIBarButtonSystemItem.refresh, target=self, action=SEL('reLoadWebView:'))
+    refreshButtonItem = UIBarButtonItem.alloc().initWithBarButtonSystemItem(
+      UIBarButtonSystemItem.refresh, target=self, action=SEL('reLoadWebView:'))
     #self.navigationItem.rightBarButtonItem = refreshButtonItem
-    refreshButtonItem = UIBarButtonItem.alloc().initWithImage(UIImage.systemImageNamed_('arrow.clockwise.circle'), style=UIBarButtonItemStyle.plain,target=self, action=SEL('reLoadWebView:'))
 
     saveButtonItem = UIBarButtonItem.alloc().initWithBarButtonSystemItem(
       UIBarButtonSystemItem.save, target=self, action=SEL('doneButtonTapped:'))
 
-    #closeButtonItem = UIBarButtonItem.alloc().initWithBarButtonSystemItem(UIBarButtonSystemItem.close,target=self,action=SEL('doneButtonTapped:'))
-    
-    closeButtonItem = UIBarButtonItem.alloc().initWithImage(UIImage.systemImageNamed_('multiply.circle'),style=UIBarButtonItemStyle.plain,target=self,action=SEL('doneButtonTapped:'))
+    closeButtonItem = UIBarButtonItem.alloc().initWithBarButtonSystemItem(
+      UIBarButtonSystemItem.close,
+      target=self,
+      action=SEL('doneButtonTapped:'))
 
     #done
     #plain
@@ -153,7 +138,7 @@ class WebViewController(UIViewController):
 
     #drawTextInRect_
 
-    pdbr.state(saveButtonItem)
+    pdbr.state(titleLabel)
     titleButtonItem = UIBarButtonItem.alloc().initWithCustomView_(titleLabel)
 
     flexibleSpaceBarButtonItem = UIBarButtonItem.alloc(
