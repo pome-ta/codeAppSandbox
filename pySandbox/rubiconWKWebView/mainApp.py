@@ -12,7 +12,9 @@ from rbedge.enumerations import (
   UIControlEvents,
   UIBarButtonSystemItem,
   UIBarButtonItemStyle,
+  NSTextAlignment,
   NSKeyValueObservingOptions,
+  UIViewAutoresizing,
 )
 from rbedge.globalVariables import (
   UIFontTextStyle, )
@@ -146,11 +148,15 @@ class WebViewController(UIViewController):
     #titleButtonItem = UIBarButtonItem.alloc().initWithTitle('hogeaaaaaaaa',menu=None)
 
     titleLabel = UILabel.new()
+    titleLabel.setTextAlignment_(NSTextAlignment.center)
     #titleLabel.setFrame_(CGRectMake(0.0, 0.0, 600.0, 800.0))
     #titleLabel.drawTextInRect_(CGRectMake(0.0,0.0,200.0,400.0))
-    titleLabel.setText_('hogeeeeeeeeeee\nfugaaaaaaaaaaaaaaaaa')
-    titleLabel.setAdjustsFontSizeToFitWidth_(True)
-    #setAutoresizingMask
+    #titleLabel.setText_('')
+    #titleLabel.setAdjustsFontSizeToFitWidth_(True)
+    #titleLabel.setAdjustsFontSizeToFitWidth_(True)
+    #titleLabel.sizeToFit()
+    #pdbr.state(titleLabel)
+    #titleLabel.setAutoresizingMask_(UIViewAutoresizing.flexibleWidth)
     titleLabel.backgroundColor = UIColor.systemDarkRedColor()
 
     #drawTextInRect_
@@ -272,7 +278,7 @@ class WebViewController(UIViewController):
                  ctypes.c_bool,
                ])
     # print(f'\t{NSStringFromClass(__class__)}: viewWillDisappear_')
-    pdbr.state(self.titleLabel)
+    #pdbr.state(self.titleLabel)
 
     if self.savePath is None or not (self.savePath.exists()):
       return
@@ -327,6 +333,7 @@ class WebViewController(UIViewController):
                                                       change, context):
     title = self.wkWebView.title
     self.titleLabel.setText_(str(title))
+    self.titleLabel.sizeToFit()
     #self.titleLabel.setAdjustsLetterSpacingToFitWidth_(True)
 
   # --- WKUIDelegate

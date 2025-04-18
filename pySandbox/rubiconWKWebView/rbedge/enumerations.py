@@ -147,3 +147,13 @@ class UIViewAutoresizing:
   flexibleHeight: int = 1 << 4
   flexibleBottomMargin: int = 1 << 5
 
+
+# ref: [NSTextAlignment | Apple Developer Documentation](https://developer.apple.com/documentation/uikit/nstextalignment?language=objc)
+#@dataclass
+class NSTextAlignment:
+  # ref: [text.rs - source](https://docs.rs/objc2-ui-kit/latest/src/objc2_ui_kit/text.rs.html#26)
+  left: int = 0
+  right: int = 2  # wip: `TARGET_ABI_USES_IOS_VALUES`
+  center: int = 1  # wip: `TARGET_ABI_USES_IOS_VALUES`
+  justified: int = 3
+  natural: int = 4
