@@ -77,7 +77,7 @@ class WebViewController(UIViewController):
     #print(f'\t{NSStringFromClass(__class__)}: loadView')
 
     # --- toolbar set up
-    #self.navigationController.setNavigationBarHidden_animated_(True, True)
+    self.navigationController.setNavigationBarHidden_animated_(True, True)
     self.navigationController.setToolbarHidden_animated_(False, True)
 
     circleImage = UIImage.systemImageNamed_('circle.badge.checkmark')
@@ -154,8 +154,8 @@ class WebViewController(UIViewController):
     # --- Navigation
     self.navigationItem.title = NSStringFromClass(__class__) if (
       title := self.navigationItem.title) is None else title
-    #self.view.backgroundColor = UIColor.systemBackgroundColor()
-    self.view.backgroundColor = UIColor.systemDarkRedColor()
+    self.view.backgroundColor = UIColor.systemBackgroundColor()
+    #self.view.backgroundColor = UIColor.systemDarkRedColor()
 
     # --- Layout
     self.view.addSubview_(self.wkWebView)
@@ -181,6 +181,7 @@ class WebViewController(UIViewController):
                  ctypes.c_bool,
                ])
     #print(f'\t{NSStringFromClass(__class__)}: viewWillAppear_')
+    #self.wkWebView.reloadFromOrigin()
 
   @objc_method
   def viewDidAppear_(self, animated: bool):
@@ -192,6 +193,7 @@ class WebViewController(UIViewController):
                  ctypes.c_bool,
                ])
     #print(f'\t{NSStringFromClass(__class__)}: viewDidAppear_')
+    #self.wkWebView.reload()
 
   @objc_method
   def viewWillDisappear_(self, animated: bool):
@@ -315,8 +317,8 @@ if __name__ == '__main__':
   main_vc = WebViewController.alloc().initWithIndexPath_(index_path)
   #main_vc.savePath = save_path
 
-  #presentation_style = UIModalPresentationStyle.fullScreen
-  presentation_style = UIModalPresentationStyle.pageSheet
+  presentation_style = UIModalPresentationStyle.fullScreen
+  #presentation_style = UIModalPresentationStyle.pageSheet
 
   app = App(main_vc, presentation_style)
   app.present()
