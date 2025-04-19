@@ -136,21 +136,19 @@ class WebViewController(UIViewController):
 
     #addGestureRecognizer
     wkWebView.scrollView.bounces = True
-
-    downSwipeDownGesture = UISwipeGestureRecognizer.alloc(
-    ).initWithTarget_action_(self, SEL('downSwipeAction:'))
+    
+    downSwipeDownGesture = UISwipeGestureRecognizer.alloc().initWithTarget_action_(self, SEL('downSwipeAction:'))
     downSwipeDownGesture.setDirection_(UISwipeGestureRecognizerDirection.down)
     #downSwipeDownGesture.delegate = self
     self.view.addGestureRecognizer_(downSwipeDownGesture)
     #wkWebView.addGestureRecognizer_(downSwipeDownGesture)
-
-    upSwipeDownGesture = UISwipeGestureRecognizer.alloc(
-    ).initWithTarget_action_(self, SEL('upSwipeAction:'))
+    
+    upSwipeDownGesture = UISwipeGestureRecognizer.alloc().initWithTarget_action_(self, SEL('upSwipeAction:'))
     upSwipeDownGesture.setDirection_(UISwipeGestureRecognizerDirection.up)
     self.view.addGestureRecognizer_(upSwipeDownGesture)
-
+    
     #pdbr.state(swipeDownGesture)
-
+    
     #wkWebView.addGestureRecognizer_
 
     refreshControl = UIRefreshControl.new()
@@ -175,7 +173,7 @@ class WebViewController(UIViewController):
     #systemDarkOrangeColor
     self.navigationController.setToolbarHidden_animated_(True, True)
     self.view.backgroundColor = UIColor.systemDarkPurpleColor()
-
+    
   @objc_method
   def upSwipeAction_(self):
     print('up')
@@ -336,6 +334,7 @@ class WebViewController(UIViewController):
     # ページ読み込みが開始された時
     #print('didStartProvisionalNavigation')
     pass
+
 
   @objc_method
   def doneButtonTapped_(self, sender):

@@ -27,7 +27,6 @@ class RootNavigationController(UINavigationController):
     # xxx: 呼ばない-> `send_super(__class__, self, 'dealloc')`
     #print(f'- {NSStringFromClass(__class__)}: dealloc')
     loop.stop()
-    #print('--- stop')
 
   @objc_method
   def loadView(self):
@@ -125,9 +124,12 @@ class RootNavigationController(UINavigationController):
       self, navigationController, viewController, animated: bool):
     # xxx: layout 範囲の制限
     extendedLayout = UIRectEdge.none
-    viewController.setEdgesForExtendedLayout_(extendedLayout)
+    #viewController.setEdgesForExtendedLayout_(extendedLayout)
     
-
+    navigationController.setNavigationBarHidden_animated_(True, True)
+    self.setToolbarHidden_animated_(False, True)
+    
+    '''
     closeButtonItem = UIBarButtonItem.alloc().initWithBarButtonSystemItem(
       UIBarButtonSystemItem.close,
       target=navigationController,
@@ -142,6 +144,7 @@ class RootNavigationController(UINavigationController):
     #pdbr.state(navigationController.toolbar)
     #pdbr.state(self)
     #print(self.toolbarItems)
+    '''
 
   @objc_method
   def doneButtonTapped_(self, sender):

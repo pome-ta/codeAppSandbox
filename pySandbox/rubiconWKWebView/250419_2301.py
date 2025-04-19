@@ -81,9 +81,9 @@ class WebViewController(UIViewController):
 
     # --- toolbar set up
     self.navigationController.setNavigationBarHidden_animated_(True, True)
-    #self.navigationController.setToolbarHidden_animated_(False, True)
+    self.navigationController.setToolbarHidden_animated_(False, True)
 
-    #self.navigationController.setHidesBarsOnSwipe_(True)
+    self.navigationController.setHidesBarsOnSwipe_(True)
 
     circleImage = UIImage.systemImageNamed_('circle.badge.checkmark')
     saveButtonItem = UIBarButtonItem.alloc().initWithImage(
@@ -136,21 +136,19 @@ class WebViewController(UIViewController):
 
     #addGestureRecognizer
     wkWebView.scrollView.bounces = True
-
-    downSwipeDownGesture = UISwipeGestureRecognizer.alloc(
-    ).initWithTarget_action_(self, SEL('downSwipeAction:'))
+    
+    downSwipeDownGesture = UISwipeGestureRecognizer.alloc().initWithTarget_action_(self, SEL('downSwipeAction:'))
     downSwipeDownGesture.setDirection_(UISwipeGestureRecognizerDirection.down)
-    #downSwipeDownGesture.delegate = self
+    downSwipeDownGesture.delegate = self
     self.view.addGestureRecognizer_(downSwipeDownGesture)
     #wkWebView.addGestureRecognizer_(downSwipeDownGesture)
-
-    upSwipeDownGesture = UISwipeGestureRecognizer.alloc(
-    ).initWithTarget_action_(self, SEL('upSwipeAction:'))
+    
+    upSwipeDownGesture = UISwipeGestureRecognizer.alloc().initWithTarget_action_(self, SEL('upSwipeAction:'))
     upSwipeDownGesture.setDirection_(UISwipeGestureRecognizerDirection.up)
     self.view.addGestureRecognizer_(upSwipeDownGesture)
-
+    
     #pdbr.state(swipeDownGesture)
-
+    
     #wkWebView.addGestureRecognizer_
 
     refreshControl = UIRefreshControl.new()
@@ -167,21 +165,20 @@ class WebViewController(UIViewController):
 
     self.titleLabel = titleLabel
     self.wkWebView = wkWebView
+    self.view = wkWebView
 
   @objc_method
   def downSwipeAction_(self):
     print('dwon')
     #systemDarkPurpleColor
     #systemDarkOrangeColor
-    self.navigationController.setToolbarHidden_animated_(True, True)
     self.view.backgroundColor = UIColor.systemDarkPurpleColor()
-
+    
   @objc_method
   def upSwipeAction_(self):
     print('up')
     #systemDarkPurpleColor
     #systemDarkOrangeColor
-    self.navigationController.setToolbarHidden_animated_(False, True)
     self.view.backgroundColor = UIColor.systemDarkOrangeColor()
 
   @objc_method
@@ -196,8 +193,8 @@ class WebViewController(UIViewController):
     #self.view.backgroundColor = UIColor.systemDarkRedColor()
 
     # --- Layout
-    self.view.addSubview_(self.wkWebView)
-    self.wkWebView.translatesAutoresizingMaskIntoConstraints = False
+    #self.view.addSubview_(self.wkWebView)
+    #self.wkWebView.translatesAutoresizingMaskIntoConstraints = False
     '''
     NSLayoutConstraint.activateConstraints_([
       self.wkWebView.topAnchor.constraintEqualToAnchor_(
@@ -212,6 +209,8 @@ class WebViewController(UIViewController):
         self.view.widthAnchor, 0.5),
     ])
     '''
+    
+    '''
 
     NSLayoutConstraint.activateConstraints_([
       self.wkWebView.centerXAnchor.constraintEqualToAnchor_(
@@ -219,10 +218,11 @@ class WebViewController(UIViewController):
       self.wkWebView.centerYAnchor.constraintEqualToAnchor_(
         self.view.centerYAnchor),
       self.wkWebView.widthAnchor.constraintEqualToAnchor_multiplier_(
-        self.view.widthAnchor, 0.5),
+        self.view.widthAnchor, 1.0),
       self.wkWebView.heightAnchor.constraintEqualToAnchor_multiplier_(
         self.view.heightAnchor, 1.0),
     ])
+    '''
 
   @objc_method
   def viewWillAppear_(self, animated: bool):
@@ -336,6 +336,7 @@ class WebViewController(UIViewController):
     # ページ読み込みが開始された時
     #print('didStartProvisionalNavigation')
     pass
+
 
   @objc_method
   def doneButtonTapped_(self, sender):
