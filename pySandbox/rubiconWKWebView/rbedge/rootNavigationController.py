@@ -15,6 +15,9 @@ from . import pdbr
 
 UINavigationController = ObjCClass('UINavigationController')
 UIBarButtonItem = ObjCClass('UIBarButtonItem')
+UINavigationBarAppearance = ObjCClass('UINavigationBarAppearance')
+UIToolbarAppearance = ObjCClass('UIToolbarAppearance')
+
 
 
 class RootNavigationController(UINavigationController):
@@ -30,7 +33,23 @@ class RootNavigationController(UINavigationController):
   def loadView(self):
     send_super(__class__, self, 'loadView')
     #print(f'{NSStringFromClass(__class__)}: loadView')
-    #pdbr.state(self)
+    
+    navigationBarAppearance = UINavigationBarAppearance.new()
+    navigationBarAppearance.configureWithDefaultBackground()
+
+    self.navigationBar.standardAppearance = navigationBarAppearance
+    self.navigationBar.scrollEdgeAppearance = navigationBarAppearance
+    self.navigationBar.compactAppearance = navigationBarAppearance
+    self.navigationBar.compactScrollEdgeAppearance = navigationBarAppearance
+    
+    toolbarAppearance = UIToolbarAppearance.new()
+    toolbarAppearance.configureWithDefaultBackground()
+
+    self.toolbar.standardAppearance = toolbarAppearance
+    self.toolbar.scrollEdgeAppearance = toolbarAppearance
+    self.toolbar.compactAppearance = toolbarAppearance
+    self.toolbar.compactScrollEdgeAppearance = toolbarAppearance
+    
     
 
   @objc_method
@@ -39,6 +58,8 @@ class RootNavigationController(UINavigationController):
     #print(f'{NSStringFromClass(__class__)}: viewDidLoad')
     #self.delegate = self
     #self.setNavigationBar_(None)
+    #self.setNavigationBarHidden_animated_(True, True)
+    #self.setToolbarHidden_animated_(False, True)
     '''
     self.setToolbarHidden_animated_(False, True)
 
@@ -103,8 +124,8 @@ class RootNavigationController(UINavigationController):
   def navigationController_willShowViewController_animated_(
       self, navigationController, viewController, animated: bool):
     # xxx: layout 範囲の制限
-    #extendedLayout = UIRectEdge.none
-    #viewController.setEdgesForExtendedLayout_(extendedLayout)
+    extendedLayout = UIRectEdge.none
+    viewController.setEdgesForExtendedLayout_(extendedLayout)
     
 
     closeButtonItem = UIBarButtonItem.alloc().initWithBarButtonSystemItem(
