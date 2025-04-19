@@ -157,3 +157,12 @@ class NSTextAlignment:
   center: int = 1  # wip: `TARGET_ABI_USES_IOS_VALUES`
   justified: int = 3
   natural: int = 4
+
+# ref: [UISwipeGestureRecognizerDirection | Apple Developer Documentation](UISwipeGestureRecognizerDirection)
+class UISwipeGestureRecognizerDirection:
+  # ref: [UISwipeGestureRecognizer.rs - source](https://docs.rs/objc2-ui-kit/latest/src/objc2_ui_kit/generated/UISwipeGestureRecognizer.rs.html#15-26)
+  right: int = 1 << 0
+  left: int = 1 << 1
+  up: int = 1 << 2
+  down: int = 1 << 3
+

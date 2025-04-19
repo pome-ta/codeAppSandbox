@@ -13,6 +13,7 @@ from rbedge.enumerations import (
   UIBarButtonItemStyle,
   NSTextAlignment,
   NSKeyValueObservingOptions,
+  UISwipeGestureRecognizerDirection,
 )
 from rbedge.globalVariables import UIFontTextStyle
 from rbedge.makeZero import CGRectZero
@@ -27,6 +28,8 @@ NSURL = ObjCClass('NSURL')
 WKWebView = ObjCClass('WKWebView')
 WKWebViewConfiguration = ObjCClass('WKWebViewConfiguration')
 WKWebsiteDataStore = ObjCClass('WKWebsiteDataStore')
+
+UISwipeGestureRecognizer = ObjCClass('UISwipeGestureRecognizer')
 
 UIRefreshControl = ObjCClass('UIRefreshControl')
 UIBarButtonItem = ObjCClass('UIBarButtonItem')
@@ -79,7 +82,10 @@ class WebViewController(UIViewController):
     # --- toolbar set up
     self.navigationController.setNavigationBarHidden_animated_(True, True)
     self.navigationController.setToolbarHidden_animated_(False, True)
-
+    
+    #self.navigationController.setHidesBarsOnSwipe_(True)
+    
+    
     circleImage = UIImage.systemImageNamed_('circle.badge.checkmark')
     saveButtonItem = UIBarButtonItem.alloc().initWithImage(
       circleImage,
@@ -128,6 +134,8 @@ class WebViewController(UIViewController):
 
     #wkWebView.uiDelegate = self
     wkWebView.navigationDelegate = self
+    pdbr.state(wkWebView,1)
+    #addGestureRecognizer
 
     wkWebView.scrollView.bounces = True
 
@@ -161,15 +169,37 @@ class WebViewController(UIViewController):
     self.view.addSubview_(self.wkWebView)
     self.wkWebView.translatesAutoresizingMaskIntoConstraints = False
 
+
+    '''
     NSLayoutConstraint.activateConstraints_([
       self.wkWebView.topAnchor.constraintEqualToAnchor_(
         self.view.safeAreaLayoutGuide.topAnchor),
       self.wkWebView.bottomAnchor.constraintEqualToAnchor_(
         self.view.bottomAnchor),
-      self.wkWebView.leftAnchor.constraintEqualToAnchor_(self.view.leftAnchor),
-      self.wkWebView.rightAnchor.constraintEqualToAnchor_(
-        self.view.rightAnchor),
+    
+      #self.wkWebView.leftAnchor.constraintEqualToAnchor_(self.view.leftAnchor),
+      #self.wkWebView.rightAnchor.constraintEqualToAnchor_(self.view.rightAnchor),
+      
+      self.wkWebView.widthAnchor.constraintEqualToAnchor_multiplier_(
+        self.view.widthAnchor, 0.5),
     ])
+    '''
+    
+    NSLayoutConstraint.activateConstraints_([
+      self.wkWebView.centerXAnchor.constraintEqualToAnchor_(
+        self.view.centerXAnchor),
+      self.wkWebView.centerYAnchor.constraintEqualToAnchor_(
+        self.view.centerYAnchor),
+      self.wkWebView.widthAnchor.constraintEqualToAnchor_multiplier_(
+        self.view.widthAnchor, 1.0),
+      self.wkWebView.heightAnchor.constraintEqualToAnchor_multiplier_(
+        self.view.heightAnchor, 1.0),
+    ])
+    
+    
+    
+    
+
 
   @objc_method
   def viewWillAppear_(self, animated: bool):
@@ -182,6 +212,7 @@ class WebViewController(UIViewController):
                ])
     #print(f'\t{NSStringFromClass(__class__)}: viewWillAppear_')
     #self.wkWebView.reloadFromOrigin()
+    
 
   @objc_method
   def viewDidAppear_(self, animated: bool):
@@ -194,6 +225,7 @@ class WebViewController(UIViewController):
                ])
     #print(f'\t{NSStringFromClass(__class__)}: viewDidAppear_')
     #self.wkWebView.reload()
+    
 
   @objc_method
   def viewWillDisappear_(self, animated: bool):
@@ -284,6 +316,11 @@ class WebViewController(UIViewController):
     #print('didStartProvisionalNavigation')
     pass
 
+  # --- UIScrollViewDelegate
+  @objc_method
+  def scrollViewDidScroll_(self, scrollView):
+    print(scrollView)
+  
   @objc_method
   def doneButtonTapped_(self, sender):
     #pdbr.state(self.navigationController.navigationBar)
