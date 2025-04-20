@@ -87,7 +87,7 @@ class WebViewController(UIViewController):
     closeButtonItem = UIBarButtonItem.alloc().initWithImage(
       closeImage,
       style=UIBarButtonItemStyle.plain,
-      target=self.navigationController,
+      target=self,
       action=SEL('doneButtonTapped:'))
 
     titleLabel = UILabel.new()
@@ -146,7 +146,24 @@ class WebViewController(UIViewController):
     # --- Navigation
     self.navigationItem.title = NSStringFromClass(__class__) if (
       title := self.navigationItem.title) is None else title
+    #self.view.backgroundColor = UIColor.systemBackgroundColor()
     self.view.backgroundColor = UIColor.systemFillColor()
+    #secondarySystemBackgroundColor
+    #underPageBackgroundColor
+    #secondarySystemBackgroundColor
+    #secondarySystemGroupedBackgroundColor
+    #tableBackgroundColor
+    #tableCellBackgroundColor
+    #dynamicBackgroundColor
+    #groupTableViewBackgroundColor
+    #systemFillColor
+    #pdbr.state(UIColor)
+    #print(f'{UIColor.systemBackgroundColor()=}')
+    #print(f'{UIColor.secondarySystemBackgroundColor()=}')
+    #print(f'{UIColor.secondarySystemGroupedBackgroundColor()=}')
+    #print(f'{UIColor.underPageBackgroundColor()=}')
+    
+    #self.view.backgroundColor = UIColor.systemDarkRedColor()
 
     self.loadFileIndexPath()
 
@@ -197,7 +214,7 @@ class WebViewController(UIViewController):
                argtypes=[
                  ctypes.c_bool,
                ])
-    #print(f'\t{NSStringFromClass(__class__)}: viewWillDisappear_')
+    # print(f'\t{NSStringFromClass(__class__)}: viewWillDisappear_')
 
     if self.savePathObject is None or not (self.savePathObject.exists()):
       return
@@ -279,13 +296,13 @@ class WebViewController(UIViewController):
   @objc_method
   def loadFileIndexPath(self):
     #fileURLWithPath = NSURL.fileURLWithPath_isDirectory_
-    loadFileURL = NSURL.fileURLWithPath_isDirectory_(str(self.indexPathObject),
-                                                     False)
-    allowingReadAccessToURL = NSURL.fileURLWithPath_isDirectory_(
-      str(self.indexPathObject.parent), True)
+    loadFileURL = NSURL.fileURLWithPath_isDirectory_(str(self.indexPathObject), False)
+    allowingReadAccessToURL = NSURL.fileURLWithPath_isDirectory_(str(self.indexPathObject.parent),
+                                              True)
 
     self.wkWebView.loadFileURL_allowingReadAccessToURL_(
       loadFileURL, allowingReadAccessToURL)
+
 
   @objc_method
   def reLoadWebView_(self, sender):
@@ -306,8 +323,7 @@ class WebViewController(UIViewController):
 
   @objc_method
   def doneButtonTapped_(self, sender):
-    #self.visibleViewController.dismissViewControllerAnimated_completion_(True, None)
-    self.navigationController.doneButtonTapped(sender)
+    self.dismissViewControllerAnimated_completion_(True, None)
 
 
 if __name__ == '__main__':

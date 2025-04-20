@@ -1,7 +1,7 @@
 import ctypes
 
 from pyrubicon.objc.api import ObjCClass
-from pyrubicon.objc.api import objc_method
+from pyrubicon.objc.api import objc_method, objc_property
 from pyrubicon.objc.runtime import send_super, SEL
 
 from .lifeCycle import loop
@@ -19,8 +19,8 @@ UINavigationBarAppearance = ObjCClass('UINavigationBarAppearance')
 UIToolbarAppearance = ObjCClass('UIToolbarAppearance')
 
 
-
 class RootNavigationController(UINavigationController):
+  
 
   @objc_method
   def dealloc(self):
@@ -48,6 +48,8 @@ class RootNavigationController(UINavigationController):
     self.toolbar.scrollEdgeAppearance = toolbarAppearance
     self.toolbar.compactAppearance = toolbarAppearance
     self.toolbar.compactScrollEdgeAppearance = toolbarAppearance
+    
+    
     
     
 
@@ -113,6 +115,7 @@ class RootNavigationController(UINavigationController):
     extendedLayout = UIRectEdge.none
     #viewController.setEdgesForExtendedLayout_(extendedLayout)
     
+    
     closeButtonItem = UIBarButtonItem.alloc().initWithBarButtonSystemItem(
       UIBarButtonSystemItem.close,
       target=navigationController,
@@ -122,6 +125,7 @@ class RootNavigationController(UINavigationController):
     visibleViewController = navigationController.visibleViewController
     navigationItem = visibleViewController.navigationItem
     navigationItem.leftBarButtonItem = closeButtonItem
+    
     
 
   @objc_method
