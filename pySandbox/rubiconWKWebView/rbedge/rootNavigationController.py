@@ -55,20 +55,7 @@ class RootNavigationController(UINavigationController):
   def viewDidLoad(self):
     send_super(__class__, self, 'viewDidLoad')
     #print(f'{NSStringFromClass(__class__)}: viewDidLoad')
-    #self.delegate = self
-    #self.setNavigationBar_(None)
-    #self.setNavigationBarHidden_animated_(True, True)
-    #self.setToolbarHidden_animated_(False, True)
-    '''
-    self.setToolbarHidden_animated_(False, True)
-
-    closeButtonItem = UIBarButtonItem.alloc().initWithBarButtonSystemItem(
-      UIBarButtonSystemItem.close,
-      target=self,
-      action=SEL('doneButtonTapped:'))
-      
-    self.toolbar.setItems_animated_([closeButtonItem,], True)
-    '''
+    self.delegate = self
 
   @objc_method
   def viewWillAppear_(self, animated: bool):
@@ -126,10 +113,6 @@ class RootNavigationController(UINavigationController):
     extendedLayout = UIRectEdge.none
     #viewController.setEdgesForExtendedLayout_(extendedLayout)
     
-    navigationController.setNavigationBarHidden_animated_(True, True)
-    self.setToolbarHidden_animated_(False, True)
-    
-    '''
     closeButtonItem = UIBarButtonItem.alloc().initWithBarButtonSystemItem(
       UIBarButtonSystemItem.close,
       target=navigationController,
@@ -138,13 +121,8 @@ class RootNavigationController(UINavigationController):
     #leftBar
     visibleViewController = navigationController.visibleViewController
     navigationItem = visibleViewController.navigationItem
-    #navigationItem.leftBarButtonItem = closeButtonItem
-    #navigationController.toolbar.setToolbarItems_animated_([closeButtonItem,], True)
-    #navigationController.toolbar.setItems_animated_([closeButtonItem,], True)
-    #pdbr.state(navigationController.toolbar)
-    #pdbr.state(self)
-    #print(self.toolbarItems)
-    '''
+    navigationItem.leftBarButtonItem = closeButtonItem
+    
 
   @objc_method
   def doneButtonTapped_(self, sender):

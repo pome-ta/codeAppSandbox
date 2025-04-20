@@ -13,6 +13,7 @@ from rbedge.enumerations import (
   UIBarButtonItemStyle,
   NSTextAlignment,
   NSKeyValueObservingOptions,
+  UISwipeGestureRecognizerDirection,
 )
 from rbedge.globalVariables import UIFontTextStyle
 from rbedge.makeZero import CGRectZero
@@ -27,6 +28,8 @@ NSURL = ObjCClass('NSURL')
 WKWebView = ObjCClass('WKWebView')
 WKWebViewConfiguration = ObjCClass('WKWebViewConfiguration')
 WKWebsiteDataStore = ObjCClass('WKWebsiteDataStore')
+
+UISwipeGestureRecognizer = ObjCClass('UISwipeGestureRecognizer')
 
 UIRefreshControl = ObjCClass('UIRefreshControl')
 UIBarButtonItem = ObjCClass('UIBarButtonItem')
@@ -53,6 +56,7 @@ class WebViewController(UIViewController):
   def init(self):
     send_super(__class__, self, 'init')
     #print(f'\t{NSStringFromClass(__class__)}: init')
+
     self.savePath = None
     return self
 
@@ -60,6 +64,7 @@ class WebViewController(UIViewController):
   def initWithIndexPath_(self, index_path: ctypes.py_object):
     self.init()
     #print(f'\t{NSStringFromClass(__class__)}: initWithTargetURL_')
+
     if not ((target_path := Path(index_path)).exists()):
       return self
 
@@ -73,13 +78,16 @@ class WebViewController(UIViewController):
   def loadView(self):
     send_super(__class__, self, 'loadView')
     #print(f'\t{NSStringFromClass(__class__)}: loadView')
+
     # --- toolbar set up
     self.navigationController.setNavigationBarHidden_animated_(True, True)
-    self.navigationController.setToolbarHidden_animated_(False, True)
+    #self.navigationController.setToolbarHidden_animated_(False, True)
 
-    saveUpdateImage = UIImage.systemImageNamed_('circle.badge.checkmark')
-    saveUpdateButtonItem = UIBarButtonItem.alloc().initWithImage(
-      saveUpdateImage,
+    #self.navigationController.setHidesBarsOnSwipe_(True)
+
+    circleImage = UIImage.systemImageNamed_('circle.badge.checkmark')
+    saveButtonItem = UIBarButtonItem.alloc().initWithImage(
+      circleImage,
       style=UIBarButtonItemStyle.plain,
       target=self,
       action=SEL('doneButtonTapped:'))
@@ -103,7 +111,7 @@ class WebViewController(UIViewController):
     ).initWithBarButtonSystemItem(flexibleSpace, target=None, action=None)
 
     toolbarButtonItems = [
-      saveUpdateButtonItem,
+      saveButtonItem,
       flexibleSpaceBarButtonItem,
       titleButtonItem,
       flexibleSpaceBarButtonItem,
@@ -125,7 +133,25 @@ class WebViewController(UIViewController):
 
     #wkWebView.uiDelegate = self
     wkWebView.navigationDelegate = self
+
+    #addGestureRecognizer
     wkWebView.scrollView.bounces = True
+
+    downSwipeDownGesture = UISwipeGestureRecognizer.alloc(
+    ).initWithTarget_action_(self, SEL('downSwipeAction:'))
+    downSwipeDownGesture.setDirection_(UISwipeGestureRecognizerDirection.down)
+    #downSwipeDownGesture.delegate = self
+    self.view.addGestureRecognizer_(downSwipeDownGesture)
+    #wkWebView.addGestureRecognizer_(downSwipeDownGesture)
+
+    upSwipeDownGesture = UISwipeGestureRecognizer.alloc(
+    ).initWithTarget_action_(self, SEL('upSwipeAction:'))
+    upSwipeDownGesture.setDirection_(UISwipeGestureRecognizerDirection.up)
+    self.view.addGestureRecognizer_(upSwipeDownGesture)
+
+    #pdbr.state(swipeDownGesture)
+
+    #wkWebView.addGestureRecognizer_
 
     refreshControl = UIRefreshControl.new()
     refreshControl.addTarget_action_forControlEvents_(
@@ -143,6 +169,24 @@ class WebViewController(UIViewController):
     self.wkWebView = wkWebView
 
   @objc_method
+  def downSwipeAction_(self):
+    print('dwon')
+    #systemDarkPurpleColor
+    #systemDarkOrangeColor
+    self.navigationController.setToolbarHidden_animated_(True, True)
+    self.navigationController.setNavigationBarHidden_animated_(True, True)
+    self.view.backgroundColor = UIColor.systemDarkPurpleColor()
+
+  @objc_method
+  def upSwipeAction_(self):
+    print('up')
+    #systemDarkPurpleColor
+    #systemDarkOrangeColor
+    self.navigationController.setToolbarHidden_animated_(False, True)
+    self.navigationController.setNavigationBarHidden_animated_(True, True)
+    self.view.backgroundColor = UIColor.systemDarkOrangeColor()
+
+  @objc_method
   def viewDidLoad(self):
     send_super(__class__, self, 'viewDidLoad')
     #print(f'\t{NSStringFromClass(__class__)}: viewDidLoad')
@@ -156,17 +200,33 @@ class WebViewController(UIViewController):
     # --- Layout
     self.view.addSubview_(self.wkWebView)
     self.wkWebView.translatesAutoresizingMaskIntoConstraints = False
-
-    layoutGuide = self.view.safeAreaLayoutGuide
+    '''
+    NSLayoutConstraint.activateConstraints_([
+      self.wkWebView.topAnchor.constraintEqualToAnchor_(
+        self.view.safeAreaLayoutGuide.topAnchor),
+      self.wkWebView.bottomAnchor.constraintEqualToAnchor_(
+        self.view.bottomAnchor),
+    
+      #self.wkWebView.leftAnchor.constraintEqualToAnchor_(self.view.leftAnchor),
+      #self.wkWebView.rightAnchor.constraintEqualToAnchor_(self.view.rightAnchor),
+      
+      self.wkWebView.widthAnchor.constraintEqualToAnchor_multiplier_(
+        self.view.widthAnchor, 0.5),
+    ])
+    '''
+    
+    layoutGuide=self.view.safeAreaLayoutGuide
 
     NSLayoutConstraint.activateConstraints_([
-      self.wkWebView.topAnchor.constraintEqualToAnchor_(layoutGuide.topAnchor),
+      self.wkWebView.centerXAnchor.constraintEqualToAnchor_(
+        self.view.centerXAnchor),
+      self.wkWebView.centerYAnchor.constraintEqualToAnchor_(
+        self.view.centerYAnchor),
+      self.wkWebView.widthAnchor.constraintEqualToAnchor_multiplier_(
+        self.view.widthAnchor, 0.5),
+      #self.wkWebView.heightAnchor.constraintEqualToAnchor_multiplier_(self.view.heightAnchor, 1.0),
       self.wkWebView.bottomAnchor.constraintEqualToAnchor_(
         layoutGuide.bottomAnchor),
-      self.wkWebView.leftAnchor.constraintEqualToAnchor_(
-        layoutGuide.leftAnchor),
-      self.wkWebView.rightAnchor.constraintEqualToAnchor_(
-        layoutGuide.rightAnchor),
     ])
 
   @objc_method
@@ -179,6 +239,7 @@ class WebViewController(UIViewController):
                  ctypes.c_bool,
                ])
     #print(f'\t{NSStringFromClass(__class__)}: viewWillAppear_')
+    #self.wkWebView.reloadFromOrigin()
 
   @objc_method
   def viewDidAppear_(self, animated: bool):
@@ -190,6 +251,7 @@ class WebViewController(UIViewController):
                  ctypes.c_bool,
                ])
     #print(f'\t{NSStringFromClass(__class__)}: viewDidAppear_')
+    #self.wkWebView.reload()
 
   @objc_method
   def viewWillDisappear_(self, animated: bool):
@@ -245,6 +307,7 @@ class WebViewController(UIViewController):
   @objc_method
   def webView_didCommitNavigation_(self, webView, navigation):
     # 遷移開始時
+    #print('didCommitNavigation')
     pass
 
   @objc_method
@@ -276,10 +339,12 @@ class WebViewController(UIViewController):
   @objc_method
   def webView_didStartProvisionalNavigation_(self, webView, navigation):
     # ページ読み込みが開始された時
+    #print('didStartProvisionalNavigation')
     pass
 
   @objc_method
   def doneButtonTapped_(self, sender):
+    #pdbr.state(self.navigationController.navigationBar)
     self.dismissViewControllerAnimated_completion_(True, None)
 
   @objc_method
