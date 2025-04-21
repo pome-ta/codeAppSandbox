@@ -3,32 +3,33 @@
 
 console.log(1);
 
-//document.title = 'js top title title title title title title title title title title';
+//document.title = `js top title title title title title title title title title title`;
 
 function addElement() {
-  const newDiv = document.createElement('div');
-  newDiv.setAttribute('id','logDiv');
+  const newDiv = document.createElement("div");
+  newDiv.setAttribute("id","logDiv");
 
-  const newContent = document.createTextNode('みなさん、こんにちは!');
+  const newContent = document.createTextNode("みなさん、こんにちは!2025-04-21 11:36:00.354053");
 
   newDiv.appendChild(newContent);
 
-  const currentDiv = document.getElementById('div1');
+  const currentDiv = document.getElementById("div1");
   document.body.insertBefore(newDiv, currentDiv);
 }
 
-document.addEventListener('DOMContentLoaded', (event) => {
+document.addEventListener("DOMContentLoaded", (event) => {
   console.log(2);
   addElement()
 });
 
 
-window.addEventListener('load', (event) => {
+window.addEventListener("load", (event) => {
   console.log(3);
-  //document.title = 'js load titletitle title title title title title title title title title';
-  const logDiv = document.getElementById('logDiv');
+  //document.title = `js load titletitle title title title title title title title title title`;
+  const logDiv = document.getElementById("logDiv");
   const textContent = logDiv.textContent;
   console.log(textContent);
 });
 
 console.log(4);
+    
