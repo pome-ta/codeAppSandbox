@@ -9,7 +9,7 @@ function addElement() {
   const newDiv = document.createElement("div");
   newDiv.setAttribute("id","logDiv");
 
-  const newContent = document.createTextNode("みなさん、こんにちは!2025-04-21 11:36:00.354053");
+  const newContent = document.createTextNode("みなさん、こんにちは!2025-04-22 01:28:30.144864");
 
   newDiv.appendChild(newContent);
 

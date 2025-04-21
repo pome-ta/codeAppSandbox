@@ -349,25 +349,32 @@ window.addEventListener("load", (event) => {
 console.log(4);
     ''' % (str(datetime.datetime.now()))
 
+    #print(text)
+    #
     self.savePathObject.write_text(text, encoding='utf-8')
-
-    try:
-      import editor
-    except (ModuleNotFoundError, LookupError):
-      return
-
-    def open_file(url: Path, tab: bool):
+    '''
+    with open(self.savePathObject, mode='w', encoding='utf-8') as f:
+      f.write(text)
+    '''
+    
+    
+    #print(self.savePathObject.resolve())
+    
+    import editor
+    def open_file(url:Path, tab:bool):
       editor.open_file(f'{url.resolve()}', tab)
-
-    # todo: save したfile editor 上のバッファを最新にする
+    #editor.open_file(f'{self.savePathObject.resolve()}', new_tab=True)
     open_file(self.savePathObject, True)
+    
     dummy_path = Path(editor.__file__)
-    while _path := dummy_path:
+    while _path:= dummy_path:
       if (dummy_path := _path).name == 'Pythonista3.app':
         break
       dummy_path = _path.parent
     open_file(Path('./', dummy_path, 'Welcome3.md'), False)
+    #editor.open_file(f"{Path('./', dummy_path, 'Welcome3.md').resolve()}", new_tab=False)
     open_file(self.savePathObject, False)
+    
 
 
 if __name__ == '__main__':
