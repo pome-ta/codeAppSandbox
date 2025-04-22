@@ -20,7 +20,6 @@ UIToolbarAppearance = ObjCClass('UIToolbarAppearance')
 
 
 class RootNavigationController(UINavigationController):
-  
 
   @objc_method
   def dealloc(self):
@@ -32,7 +31,7 @@ class RootNavigationController(UINavigationController):
   def loadView(self):
     send_super(__class__, self, 'loadView')
     #print(f'{NSStringFromClass(__class__)}: loadView')
-    
+
     navigationBarAppearance = UINavigationBarAppearance.new()
     navigationBarAppearance.configureWithDefaultBackground()
 
@@ -40,7 +39,7 @@ class RootNavigationController(UINavigationController):
     self.navigationBar.scrollEdgeAppearance = navigationBarAppearance
     self.navigationBar.compactAppearance = navigationBarAppearance
     self.navigationBar.compactScrollEdgeAppearance = navigationBarAppearance
-    
+
     toolbarAppearance = UIToolbarAppearance.new()
     toolbarAppearance.configureWithDefaultBackground()
 
@@ -48,10 +47,6 @@ class RootNavigationController(UINavigationController):
     self.toolbar.scrollEdgeAppearance = toolbarAppearance
     self.toolbar.compactAppearance = toolbarAppearance
     self.toolbar.compactScrollEdgeAppearance = toolbarAppearance
-    
-    
-    
-    
 
   @objc_method
   def viewDidLoad(self):
@@ -114,8 +109,7 @@ class RootNavigationController(UINavigationController):
     # xxx: layout 範囲の制限
     extendedLayout = UIRectEdge.none
     #viewController.setEdgesForExtendedLayout_(extendedLayout)
-    
-    
+
     closeButtonItem = UIBarButtonItem.alloc().initWithBarButtonSystemItem(
       UIBarButtonSystemItem.close,
       target=navigationController,
@@ -125,8 +119,6 @@ class RootNavigationController(UINavigationController):
     visibleViewController = navigationController.visibleViewController
     navigationItem = visibleViewController.navigationItem
     navigationItem.leftBarButtonItem = closeButtonItem
-    
-    
 
   @objc_method
   def doneButtonTapped_(self, sender):
