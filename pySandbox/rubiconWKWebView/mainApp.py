@@ -128,7 +128,7 @@ class WebViewController(UIViewController):
     wkWebView.navigationDelegate = self
     wkWebView.scrollView.delegate = self
     wkWebView.scrollView.bounces = True
-    wkWebView.scrollView.keyboardDismissMode = UIScrollViewKeyboardDismissMode.onDrag
+    wkWebView.scrollView.keyboardDismissMode = UIScrollViewKeyboardDismissMode.interactive
 
     refreshControl = UIRefreshControl.new()
     refreshControl.addTarget_action_forControlEvents_(
@@ -282,13 +282,9 @@ class WebViewController(UIViewController):
     self.navigationController.doneButtonTapped(sender)
 
   @objc_method
-  def reLoadWebView_(self, sender):
+  def refreshWebView_(self, sender):
     self.wkWebView.reload()
     #self.wkWebView.reloadFromOrigin()
-
-  @objc_method
-  def refreshWebView_(self, sender):
-    self.reLoadWebView_(sender)
     sender.endRefreshing()
 
   @objc_method
