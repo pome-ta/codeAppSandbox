@@ -13,7 +13,6 @@ from rbedge.enumerations import (
   UIBarButtonSystemItem,
   UIBarButtonItemStyle,
   NSTextAlignment,
-  UIScrollViewKeyboardDismissMode,
   NSKeyValueObservingOptions,
 )
 from rbedge.globalVariables import UIFontTextStyle
@@ -126,9 +125,7 @@ class WebViewController(UIViewController):
 
     #wkWebView.uiDelegate = self
     wkWebView.navigationDelegate = self
-    wkWebView.scrollView.delegate = self
     wkWebView.scrollView.bounces = True
-    wkWebView.scrollView.keyboardDismissMode = UIScrollViewKeyboardDismissMode.onDrag
 
     refreshControl = UIRefreshControl.new()
     refreshControl.addTarget_action_forControlEvents_(
