@@ -213,6 +213,7 @@ class WebViewController(UIViewController):
                  ctypes.c_bool,
                ])
     #print(f'\t{NSStringFromClass(__class__)}: viewDidDisappear_')
+    #self.navigationController.setNavigationBarHidden_animated_(False, True)
 
   @objc_method
   def didReceiveMemoryWarning(self):
