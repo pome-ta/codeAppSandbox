@@ -2,6 +2,7 @@
   "name": "rolluptstest",
   "version": "1.0.0",
   "main": "index.js",
+  "build": "rollup -c",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -12,11 +13,8 @@
   "description": "",
   "devDependencies": {
     "@rollup/plugin-typescript": "^12.1.2",
-    "@rollup/wasm-node": "^4.40.0",
     "rollup": "^4.40.0",
-    "tslib": "^2.8.1"
-  },
-  "overrides": {
-    "rollup": "npm:@rollup/wasm-node@^4.40.0"
+    "tslib": "^2.8.1",
+    "typescript": "^5.8.3"
   }
 }
