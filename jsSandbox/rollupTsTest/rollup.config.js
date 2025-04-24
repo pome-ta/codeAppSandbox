@@ -1,7 +1,7 @@
 import typescript from '@rollup/plugin-typescript';
 
 export default {
-  input: './src/app.ts',
+  input: './src/app.js',
   output: {
     file: './bundle.js',
     format: 'es',
