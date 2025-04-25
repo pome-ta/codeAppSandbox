@@ -112,7 +112,8 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // --- start
-  //const myp5 = new p5(sketch, canvasTag);
+  const myp5 = new p5(sketch, canvasTag);
+  //canvasTag.appendChild(myp5)
   //console.log(myp5)
   //p5.disableFriendlyErrors = true;
   //console.log(myp5);
