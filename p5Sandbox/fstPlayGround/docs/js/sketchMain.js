@@ -1,5 +1,6 @@
-import './p5Setup.js';
+//import './p5Setup.js';
 //import './modules/p5Sound.bundle.js';
+import { p5 } from './modules/p5.bundle.js';
 
 
 const title = 'Perlin noise';
@@ -15,7 +16,7 @@ const sketch = (p) => {
 
   p.setup = () => {
     // put setup code here
-    //const cnvs = p.createCanvas(720, 720);
+    const cnvs = p.createCanvas(320, 320);
     //windowFlexSize();
 
     //windowFlexSize(true);
@@ -111,7 +112,8 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // --- start
-  new p5(sketch, canvasId);
+  //const myp5 = new p5(sketch, canvasTag);
+  //console.log(myp5)
   //p5.disableFriendlyErrors = true;
   //console.log(myp5);
   //console.log(p5);
