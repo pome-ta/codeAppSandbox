@@ -1,7 +1,6 @@
 import ctypes
 from pathlib import Path
 from typing import Union
-import datetime
 
 from pyrubicon.objc.api import ObjCClass, ObjCInstance, Block
 from pyrubicon.objc.api import objc_method, objc_property, at
@@ -84,7 +83,10 @@ class WebViewController(UIViewController):
       style=UIBarButtonItemStyle.plain,
       target=self,
       action=SEL('saveFileAction:'))
-
+    
+    refreshButtonItem = UIBarButtonItem.alloc().initWithImage(UIImage.systemImageNamed_('arrow.clockwise.circle'), style=UIBarButtonItemStyle.plain,target=self, action=SEL('reLoadWebView:'))
+    
+    
     closeImage = UIImage.systemImageNamed_('multiply.circle')
     closeButtonItem = UIBarButtonItem.alloc().initWithImage(
       closeImage,
@@ -104,7 +106,7 @@ class WebViewController(UIViewController):
     ).initWithBarButtonSystemItem(flexibleSpace, target=None, action=None)
 
     toolbarButtonItems = [
-      saveUpdateButtonItem,
+      refreshButtonItem,
       flexibleSpaceBarButtonItem,
       titleButtonItem,
       flexibleSpaceBarButtonItem,
@@ -281,10 +283,14 @@ class WebViewController(UIViewController):
     #self.visibleViewController.dismissViewControllerAnimated_completion_(True, None)
     self.navigationController.doneButtonTapped(sender)
 
+  
   @objc_method
-  def refreshWebView_(self, sender):
+  def reLoadWebView_(self, sender):
     self.wkWebView.reload()
     #self.wkWebView.reloadFromOrigin()
+  @objc_method
+  def refreshWebView_(self, sender):
+    self.reLoadWebView_(sender)
     sender.endRefreshing()
 
   @objc_method

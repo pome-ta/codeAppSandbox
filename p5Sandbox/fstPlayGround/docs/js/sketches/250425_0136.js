@@ -11,13 +11,16 @@ const sketch = (p) => {
 
   p.setup = () => {
     // put setup code here
-    p.createCanvas(p.windowWidth, p.windowHeight);
-    //windowFlexSize();
+    p.createCanvas(p.windowWidth, p.windowHeight, p.WEBGL);
+    windowFlexSize();
     
   };
   
   p.draw = () => {
     p.background(255);
+    p.box()
+    p.translate(100,100,-100); //moves our drawing origin to the top left corner
+    p.box();
   };
 
   function windowFlexSize(isFullSize = false) {
@@ -61,3 +64,4 @@ document.addEventListener('DOMContentLoaded', () => {
   new p5(sketch, canvasId);
   
 });
+
