@@ -16,7 +16,7 @@ const sketch = (p) => {
 
   p.setup = () => {
     // put setup code here
-    const cnvs = p.createCanvas(320, 320);
+    const cnvs = p.createCanvas(30, 30);
     //windowFlexSize();
 
     //windowFlexSize(true);
@@ -106,11 +106,11 @@ document.addEventListener('DOMContentLoaded', () => {
   canvasTag.style.backgroundColor = 'darkgray';
   
   //document.body.style.backgroundColor = '#121212';
-
+/*
   canvasTag.addEventListener('touchmove', (e) => e.preventDefault(), {
     passive: false,
   });
-
+*/
   // --- start
   const myp5 = new p5(sketch, canvasTag);
   //canvasTag.appendChild(myp5)
