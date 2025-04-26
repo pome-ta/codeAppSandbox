@@ -22,6 +22,10 @@ const sketch = (p) => {
     // put drawing code here
     
   };
+  
+  p.windowResized = () => {
+   console.log('re');
+  };
 
   function windowFlexSize(isFullSize = false) {
     const isInitialize =
