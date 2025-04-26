@@ -41,3 +41,6 @@ canvas {
   margin: auto;
 }
 
+canvas {
+  display: block;
+}
