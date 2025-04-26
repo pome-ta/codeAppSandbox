@@ -177,3 +177,25 @@ class UIScrollViewKeyboardDismissMode:
   onDragWithAccessory: int = 3
   interactiveWithAccessory: int = 4
 
+
+# ref: [UILayoutConstraintAxis | Apple Developer Documentation](https://developer.apple.com/documentation/uikit/nslayoutconstraint/axis?language=objc)
+#@dataclass
+class UILayoutConstraintAxis:
+  # ref: [UIView.rs - source](https://docs.rs/objc2-ui-kit/latest/src/objc2_ui_kit/generated/UIView.rs.html#1002)
+  horizontal: int = 0
+  vertical: int = 1
+
+
+# ref: [UIStackViewAlignment | Apple Developer Documentation](https://developer.apple.com/documentation/uikit/uistackview/alignment-swift.enum?language=objc)
+#@dataclass
+class UIStackViewAlignment:
+  # ref: [UIStackView.rs - source](https://docs.rs/objc2-ui-kit/latest/src/objc2_ui_kit/generated/UIStackView.rs.html#39)
+  fill: int = 0
+  leading: int = 1
+  top: int = 1  # xxx: [UIStackViewAlignment Enum (UIKit) | Microsoft Learn](https://learn.microsoft.com/en-us/dotnet/api/uikit.uistackviewalignment?view=xamarin-ios-sdk-12)
+  firstBaseline: int = 2
+  center: int = 3
+  trailing: int = 4
+  bottom: int = 4  # xxx: [UIStackViewAlignment Enum (UIKit) | Microsoft Learn](https://learn.microsoft.com/en-us/dotnet/api/uikit.uistackviewalignment?view=xamarin-ios-sdk-12)
+  lastBaseline: int = 5
+

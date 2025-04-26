@@ -12,6 +12,8 @@ from rbedge.enumerations import (
   UIBarButtonSystemItem,
   UIBarButtonItemStyle,
   NSTextAlignment,
+  UILayoutConstraintAxis,
+  UIStackViewAlignment,
   UIScrollViewKeyboardDismissMode,
   NSKeyValueObservingOptions,
 )
@@ -34,12 +36,14 @@ UIBarButtonItem = ObjCClass('UIBarButtonItem')
 UIImage = ObjCClass('UIImage')
 UILabel = ObjCClass('UILabel')
 UIFont = ObjCClass('UIFont')
+UIStackView = ObjCClass('UIStackView')
 
 
 class WebViewController(UIViewController):
 
   wkWebView: WKWebView = objc_property()
   titleLabel: UILabel = objc_property()
+  promptLabel: UILabel = objc_property()
 
   indexPathObject: Path = objc_property(ctypes.py_object)
   savePathObject: Path = objc_property(ctypes.py_object)
@@ -77,16 +81,12 @@ class WebViewController(UIViewController):
     self.navigationController.setNavigationBarHidden_animated_(True, True)
     self.navigationController.setToolbarHidden_animated_(False, True)
 
-    saveUpdateImage = UIImage.systemImageNamed_('circle.badge.checkmark')
-    saveUpdateButtonItem = UIBarButtonItem.alloc().initWithImage(
-      saveUpdateImage,
+    refreshButtonItem = UIBarButtonItem.alloc().initWithImage(
+      UIImage.systemImageNamed_('arrow.clockwise.circle'),
       style=UIBarButtonItemStyle.plain,
       target=self,
-      action=SEL('saveFileAction:'))
-    
-    refreshButtonItem = UIBarButtonItem.alloc().initWithImage(UIImage.systemImageNamed_('arrow.clockwise.circle'), style=UIBarButtonItemStyle.plain,target=self, action=SEL('reLoadWebView:'))
-    
-    
+      action=SEL('reLoadWebView:'))
+
     closeImage = UIImage.systemImageNamed_('multiply.circle')
     closeButtonItem = UIBarButtonItem.alloc().initWithImage(
       closeImage,
@@ -98,8 +98,23 @@ class WebViewController(UIViewController):
     titleLabel.setTextAlignment_(NSTextAlignment.center)
     titleLabel.setFont_(
       UIFont.preferredFontForTextStyle_(UIFontTextStyle.caption1))
+    #titleLabel.setBackgroundColor_(UIColor.systemDarkBlueColor())
+    titleLabel.backgroundColor = UIColor.systemDarkBlueColor()
+    
 
-    titleButtonItem = UIBarButtonItem.alloc().initWithCustomView_(titleLabel)
+    promptLabel = UILabel.new()
+    promptLabel.setTextAlignment_(NSTextAlignment.center)
+    promptLabel.setFont_(
+      UIFont.preferredFontForTextStyle_(UIFontTextStyle.caption2))
+    promptLabel.setBackgroundColor_(UIColor.systemDarkOrangeColor())
+
+    stackView = UIStackView.alloc().initWithArrangedSubviews_(
+      [titleLabel, promptLabel])
+    stackView.setBackgroundColor_(UIColor.systemDarkPurpleColor())
+
+    stackTextItem = UIBarButtonItem.alloc().initWithCustomView_(stackView)
+    stackView.setAxis_(UILayoutConstraintAxis.vertical)
+    #pdbr.state(stackView)
 
     flexibleSpace = UIBarButtonSystemItem.flexibleSpace
     flexibleSpaceBarButtonItem = UIBarButtonItem.alloc(
@@ -108,7 +123,7 @@ class WebViewController(UIViewController):
     toolbarButtonItems = [
       refreshButtonItem,
       flexibleSpaceBarButtonItem,
-      titleButtonItem,
+      stackTextItem,
       flexibleSpaceBarButtonItem,
       closeButtonItem,
     ]
@@ -142,6 +157,8 @@ class WebViewController(UIViewController):
       self, at('title'), NSKeyValueObservingOptions.new, None)
 
     self.titleLabel = titleLabel
+    self.promptLabel = promptLabel
+
     self.wkWebView = wkWebView
 
   @objc_method
@@ -245,7 +262,9 @@ class WebViewController(UIViewController):
   @objc_method
   def webView_didFinishNavigation_(self, webView, navigation):
     # ページ読み込みが完了した時
-    pass
+    title = webView.title
+    self.titleLabel.setText_(str(title))
+    self.titleLabel.sizeToFit()
 
   @objc_method
   def webView_didReceiveServerRedirectForProvisionalNavigation_(
@@ -275,15 +294,16 @@ class WebViewController(UIViewController):
   def observeValueForKeyPath_ofObject_change_context_(self, keyPath, objct,
                                                       change, context):
     title = self.wkWebView.title
-    self.titleLabel.setText_(str(title))
-    self.titleLabel.sizeToFit()
+    #self.titleLabel.setText_(str(title))
+    #self.titleLabel.sizeToFit()
+    self.promptLabel.setText_(str(title))
+    self.promptLabel.sizeToFit()
 
   @objc_method
   def doneButtonTapped_(self, sender):
     #self.visibleViewController.dismissViewControllerAnimated_completion_(True, None)
     self.navigationController.doneButtonTapped(sender)
 
-  
   @objc_method
   def reLoadWebView_(self, sender):
     self.wkWebView.reload()
@@ -292,87 +312,6 @@ class WebViewController(UIViewController):
   def refreshWebView_(self, sender):
     self.reLoadWebView_(sender)
     sender.endRefreshing()
-
-  @objc_method
-  def saveFileAction_(self, sender):
-    if self.savePathObject is None or not (self.savePathObject.exists()):
-      return
-
-    javaScriptString = '''
-    (function getShaderCode() {
-      const logDiv = document.getElementById('logDiv');
-      const textContent = logDiv.textContent;
-      return textContent;
-    }());
-    '''
-    '''
-    def completionHandler(object_id, error_id):
-      objc_instance = ObjCInstance(object_id)
-      self.savePathObject.write_text(str(objc_instance), encoding='utf-8')
-
-    self.wkWebView.evaluateJavaScript_completionHandler_(
-      at(javaScriptString),
-      Block(completionHandler, None, *[
-        objc_id,
-        objc_id,
-      ]))
-    '''
-    text = '''\
-// import eruda from "https://esm.sh/eruda@3.0.1"
-// eruda.init()
-
-console.log(1);
-
-//document.title = `js top title title title title title title title title title title`;
-
-function addElement() {
-  const newDiv = document.createElement("div");
-  newDiv.setAttribute("id","logDiv");
-
-  const newContent = document.createTextNode("みなさん、こんにちは!%s");
-
-  newDiv.appendChild(newContent);
-
-  const currentDiv = document.getElementById("div1");
-  document.body.insertBefore(newDiv, currentDiv);
-}
-
-document.addEventListener("DOMContentLoaded", (event) => {
-  console.log(2);
-  addElement()
-});
-
-
-window.addEventListener("load", (event) => {
-  console.log(3);
-  //document.title = `js load titletitle title title title title title title title title title`;
-  const logDiv = document.getElementById("logDiv");
-  const textContent = logDiv.textContent;
-  console.log(textContent);
-});
-
-console.log(4);
-    ''' % (str(datetime.datetime.now()))
-
-    self.savePathObject.write_text(text, encoding='utf-8')
-
-    try:
-      import editor
-    except (ModuleNotFoundError, LookupError):
-      return
-
-    def open_file(url: Path, tab: bool):
-      editor.open_file(f'{url.resolve()}', tab)
-
-    # todo: save したfile editor 上のバッファを最新にする
-    open_file(self.savePathObject, True)
-    dummy_path = Path(editor.__file__)
-    while _path := dummy_path:
-      if (dummy_path := _path).name == 'Pythonista3.app':
-        break
-      dummy_path = _path.parent
-    open_file(Path('./', dummy_path, 'Welcome3.md'), False)
-    open_file(self.savePathObject, False)
 
 
 if __name__ == '__main__':
