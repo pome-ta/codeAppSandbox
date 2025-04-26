@@ -3,70 +3,24 @@
 import { p5 } from './modules/p5.bundle.js';
 
 
-const title = 'Perlin noise';
+const title = '下部に余白あり？';
 
 const sketch = (p) => {
   let w, h;
   let setupWidth, setupHeight, setupRatio;
 
-  const div = 128;
-  const mul = 0.01;
-  const amp = 100;
-  let bgColor;
-
   p.setup = () => {
     // put setup code here
-    const cnvs = p.createCanvas(30, 30);
-    //windowFlexSize();
-
-    //windowFlexSize(true);
+    //p.createCanvas(128, 128);
+    p.resizeCanvas(256, 256);
     
-
-    //p.background(211); // lightgray
-    p.colorMode(p.HSB, 1.0, 1.0, 1.0, 1.0);
-    bgColor = p.color(0, 0, 211 / 255);
-
-    // p.background(0, 0, 211 / 255);
-    p.background(bgColor);
-    // p.background(0);
-    //p.noFill();
-    p.noStroke();
-    //p.noLoop();
+    p.background(1);
+    p.noLoop();
   };
 
   p.draw = () => {
     // put drawing code here
-    p.background(bgColor);
-    // p.background(0);
-
-
-    const cx = w / 2;
-    const cy = h / 2;
-
-    const step = Math.max(w, h) / div;
     
-
-    const sizeMul = 0.5;
-    const size = step / sizeMul;
-    
-
-    const s = p.millis() / 500;
-
-    for (let _y = 0; _y <= div; _y++) {
-      for (let _x = 0; _x <= div; _x++) {
-        const x = _x * step;
-        const y = _y * step;
-
-        //const hNoise = p.noise((_x + s) * mul, (_y + s) * mul, s * mul);
-        //const hNoise = p.noise(_x * mul, _y * mul, s * mul);
-        const hNoise = p.noise((_x + s) * mul, (_y + s) * mul, s * mul);
-
-        //p.fill(hNoise);
-        p.fill(hNoise, 1, 1);
-        p.ellipse(x, y, size, size);
-        //p.ellipse(x, y, size * hNoise, size * hNoise);
-      }
-    }
   };
 
   function windowFlexSize(isFullSize = false) {
