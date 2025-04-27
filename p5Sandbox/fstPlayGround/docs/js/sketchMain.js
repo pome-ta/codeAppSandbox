@@ -57,7 +57,7 @@ const sketch = (p) => {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-  //document.title = title ? title : document.title;
+  document.title = title ? title : document.title;
 
   const canvasId = 'p5Canvas';
   const canvasTag = document.querySelector(`#${canvasId}`);
