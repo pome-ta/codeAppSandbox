@@ -38,6 +38,8 @@ UILabel = ObjCClass('UILabel')
 UIFont = ObjCClass('UIFont')
 UIStackView = ObjCClass('UIStackView')
 
+pdbr.state(UIColor)
+
 
 class WebViewController(UIViewController):
 
@@ -94,22 +96,30 @@ class WebViewController(UIViewController):
       target=self.navigationController,
       action=SEL('doneButtonTapped:'))
 
+    
+
+    promptLabel = UILabel.new()
+    promptLabel.setTextAlignment_(NSTextAlignment.center)
+    promptLabel.setFont_(
+      UIFont.preferredFontForTextStyle_(UIFontTextStyle.subheadline))
+    
+    #UIFontTextStyleExtraLargeTitle
+    #caption2
+    #promptLabel.setBackgroundColor_(UIColor.systemDarkOrangeColor())
+    promptLabel.backgroundColor = UIColor.systemDarkOrangeColor()
+    
+    
     titleLabel = UILabel.new()
     titleLabel.setTextAlignment_(NSTextAlignment.center)
     titleLabel.setFont_(
       UIFont.preferredFontForTextStyle_(UIFontTextStyle.caption1))
     #titleLabel.setBackgroundColor_(UIColor.systemDarkBlueColor())
     titleLabel.backgroundColor = UIColor.systemDarkBlueColor()
-    
 
-    promptLabel = UILabel.new()
-    promptLabel.setTextAlignment_(NSTextAlignment.center)
-    promptLabel.setFont_(
-      UIFont.preferredFontForTextStyle_(UIFontTextStyle.caption2))
-    promptLabel.setBackgroundColor_(UIColor.systemDarkOrangeColor())
-
-    stackView = UIStackView.alloc().initWithArrangedSubviews_(
-      [titleLabel, promptLabel])
+    stackView = UIStackView.alloc().initWithArrangedSubviews_([
+      promptLabel,
+      titleLabel,
+    ])
     stackView.setBackgroundColor_(UIColor.systemDarkPurpleColor())
 
     stackTextItem = UIBarButtonItem.alloc().initWithCustomView_(stackView)
