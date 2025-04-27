@@ -199,3 +199,13 @@ class UIStackViewAlignment:
   bottom: int = 4  # xxx: [UIStackViewAlignment Enum (UIKit) | Microsoft Learn](https://learn.microsoft.com/en-us/dotnet/api/uikit.uistackviewalignment?view=xamarin-ios-sdk-12)
   lastBaseline: int = 5
 
+
+# ref: [UIStackViewDistribution | Apple Developer Documentation](https://developer.apple.com/documentation/uikit/uistackview/distribution-swift.enum?language=objc)
+class UIStackViewDistribution:
+  # ref: [UIStackView.rs - source](https://docs.rs/objc2-ui-kit/latest/src/objc2_ui_kit/generated/UIStackView.rs.html#19)
+  fill: int = 0
+  fillEqually: int = 1
+  fillProportionally: int = 2
+  equalSpacing: int = 3
+  equalCentering: int = 4
+

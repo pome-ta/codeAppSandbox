@@ -57,12 +57,11 @@ const sketch = (p) => {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-  document.title = title ? title : document.title;
+  //document.title = title ? title : document.title;
 
   const canvasId = 'p5Canvas';
   const canvasTag = document.querySelector(`#${canvasId}`);
   canvasTag.style.backgroundColor = 'darkgray';
-  console.log(canvasTag.clientHeight)
   
   //document.body.style.backgroundColor = '#121212';
 /*
@@ -71,12 +70,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 */
   // --- start
-  const myp5 = new p5(sketch, canvasTag);
-  //canvasTag.appendChild(myp5)
-  console.log(myp5)
-  console.log(canvasTag.clientHeight)
-  //p5.disableFriendlyErrors = true;
-  //console.log(myp5);
-  //console.log(p5);
+  new p5(sketch, canvasTag);
 });
 

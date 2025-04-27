@@ -13,7 +13,7 @@ from rbedge.enumerations import (
   UIBarButtonItemStyle,
   NSTextAlignment,
   UILayoutConstraintAxis,
-  UIStackViewAlignment,
+  UIStackViewDistribution,
   UIScrollViewKeyboardDismissMode,
   NSKeyValueObservingOptions,
 )
@@ -37,8 +37,6 @@ UIImage = ObjCClass('UIImage')
 UILabel = ObjCClass('UILabel')
 UIFont = ObjCClass('UIFont')
 UIStackView = ObjCClass('UIStackView')
-
-pdbr.state(UIColor)
 
 
 class WebViewController(UIViewController):
@@ -96,31 +94,28 @@ class WebViewController(UIViewController):
       target=self.navigationController,
       action=SEL('doneButtonTapped:'))
 
-    
-
     promptLabel = UILabel.new()
     promptLabel.setTextAlignment_(NSTextAlignment.center)
     promptLabel.setFont_(
-      UIFont.preferredFontForTextStyle_(UIFontTextStyle.subheadline))
-    
-    #UIFontTextStyleExtraLargeTitle
-    #caption2
+      UIFont.preferredFontForTextStyle_(UIFontTextStyle.callout))
+
     #promptLabel.setBackgroundColor_(UIColor.systemDarkOrangeColor())
-    promptLabel.backgroundColor = UIColor.systemDarkOrangeColor()
-    
-    
+    #promptLabel.backgroundColor = UIColor.systemDarkOrangeColor()
+
     titleLabel = UILabel.new()
     titleLabel.setTextAlignment_(NSTextAlignment.center)
     titleLabel.setFont_(
       UIFont.preferredFontForTextStyle_(UIFontTextStyle.caption1))
     #titleLabel.setBackgroundColor_(UIColor.systemDarkBlueColor())
-    titleLabel.backgroundColor = UIColor.systemDarkBlueColor()
+    #titleLabel.backgroundColor = UIColor.systemDarkBlueColor()
 
     stackView = UIStackView.alloc().initWithArrangedSubviews_([
       promptLabel,
       titleLabel,
     ])
-    stackView.setBackgroundColor_(UIColor.systemDarkPurpleColor())
+    stackView.setDistribution_(UIStackViewDistribution.equalCentering)
+    #pdbr.state(stackView)
+    #stackView.setBackgroundColor_(UIColor.systemDarkPurpleColor())
 
     stackTextItem = UIBarButtonItem.alloc().initWithCustomView_(stackView)
     stackView.setAxis_(UILayoutConstraintAxis.vertical)
@@ -275,6 +270,7 @@ class WebViewController(UIViewController):
     title = webView.title
     self.titleLabel.setText_(str(title))
     self.titleLabel.sizeToFit()
+    self.promptLabel.setHidden_(self.titleLabel.text == self.promptLabel.text)
 
   @objc_method
   def webView_didReceiveServerRedirectForProvisionalNavigation_(
@@ -304,10 +300,9 @@ class WebViewController(UIViewController):
   def observeValueForKeyPath_ofObject_change_context_(self, keyPath, objct,
                                                       change, context):
     title = self.wkWebView.title
-    #self.titleLabel.setText_(str(title))
-    #self.titleLabel.sizeToFit()
     self.promptLabel.setText_(str(title))
     self.promptLabel.sizeToFit()
+    self.promptLabel.setHidden_(self.titleLabel.text == self.promptLabel.text)
 
   @objc_method
   def doneButtonTapped_(self, sender):
@@ -318,6 +313,7 @@ class WebViewController(UIViewController):
   def reLoadWebView_(self, sender):
     self.wkWebView.reload()
     #self.wkWebView.reloadFromOrigin()
+
   @objc_method
   def refreshWebView_(self, sender):
     self.reLoadWebView_(sender)
