@@ -325,10 +325,9 @@ if __name__ == '__main__':
   from rbedge.enumerations import UIModalPresentationStyle
 
   index_path = Path('./docs/index.html')
-  save_path = Path('./src/js/main.js')
+  
 
   main_vc = WebViewController.alloc().initWithIndexPath_(index_path)
-  #main_vc.savePathObject = save_path
 
   presentation_style = UIModalPresentationStyle.fullScreen
   #presentation_style = UIModalPresentationStyle.pageSheet
