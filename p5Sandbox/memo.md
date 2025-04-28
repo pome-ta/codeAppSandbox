@@ -1,5 +1,13 @@
 # 📝 2025/04/27
 
+
+```
+Function "step" on line 34 is being redeclared and conflicts with a p5.js function. p5.js reference: https://p5js.org/reference/p5/step
+```
+
+
+# 📝 2025/04/27
+
 （便宜上）`v1(.11.5)` と`v2(.0.1)` として区別する
 
 ## リポジトリ

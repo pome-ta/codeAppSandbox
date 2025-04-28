@@ -1,4 +1,4 @@
-import p5  from './lib/p5.esm.js';
+import p5 from './lib/p5.esm.js';
 
 
 const title = 'Perlin noise';
@@ -22,7 +22,8 @@ const sketch = (p) => {
     p.background(bgColor);
     //p.noFill();
     p.noStroke();
-    //p.noLoop();
+    p.noLoop();
+    console.log(p._isGlobal)
   };
 
   p.draw = () => {
@@ -101,5 +102,11 @@ document.addEventListener('DOMContentLoaded', () => {
     passive: false,
   });
   // --- start
-  new p5(sketch, canvasTag);
+  const myp5 = new p5(sketch, canvasTag);
+  //console.log(p5)
+  console.log(p5.instance)
+  console.log(myp5.instance)
+  //console.log(window)
+  //console.log(myp5)
+  
 });
