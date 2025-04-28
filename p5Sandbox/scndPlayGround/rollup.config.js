@@ -10,7 +10,7 @@ const p5Set = () => {
     commonjs(),
     copy({
       targets: [
-        { src: './node_modules/p5/lib/**', dest: './docs/lib' },
+        { src: 'node_modules/p5/lib', dest: './docs/' },
       ]
     })],
   };
