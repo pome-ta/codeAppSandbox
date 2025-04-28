@@ -1,18 +1,16 @@
-import { nodeResolve } from '@rollup/plugin-node-resolve';
-import commonjs from '@rollup/plugin-commonjs';
-import copy from 'rollup-plugin-copy'
+import { copy } from '@web/rollup-plugin-copy';
+
 
 const p5Set = () => {
   return {
     input: './docs/js/bundles/p5bundle.js',
-  plugins: [
-    nodeResolve(),
-    commonjs(),
-    copy({
-      targets: [
-        { src: 'node_modules/p5/lib', dest: './docs/' },
-      ]
-    })],
+    output: {
+      dir: './docs/lib',
+      format: 'es',
+    },
+    plugins: [
+      copy({ patterns: '**/*.js', rootDir: 'node_modules/p5/lib' });
+    ],
   };
 };
 
