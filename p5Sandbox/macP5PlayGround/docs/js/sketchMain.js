@@ -20,10 +20,10 @@ const sketch = (p) => {
     p.colorMode(p.HSB, 1.0, 1.0, 1.0, 1.0);
     bgColor = p.color(0, 0, 211 / 255);
 
-    // p.background(bgColor);
-    p.noFill();
-    // p.noStroke();
-    p.noLoop();
+    p.background(bgColor);
+    //p.noFill();
+    p.noStroke();
+    //p.noLoop();
   };
 
   p.draw = () => {
