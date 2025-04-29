@@ -16,7 +16,7 @@ const p5Set = () => {
   plugins: [nodeResolve(), commonjs(), localResolve(),
   copy({
       targets: [
-        { src: 'node_modules/p5/lib', dest: './docs' },
+        { src: 'node_modules/p5/lib', dest: './docs/js' },
       ]
     }),
   ],
