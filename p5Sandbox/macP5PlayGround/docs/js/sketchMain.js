@@ -58,13 +58,10 @@ const sketch = (p) => {
     }
   };
 
-  // p.windowResized = (e) => {
-  // }
-  function windowResized(e) {
+  p.windowResized = (e) => {
     windowFlexSize(true);
-    
   }
-
+  
 
   function windowFlexSize(isFullSize = false) {
     const isInitialize =
