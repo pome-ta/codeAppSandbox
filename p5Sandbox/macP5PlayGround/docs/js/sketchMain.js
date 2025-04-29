@@ -14,38 +14,37 @@ const sketch = (p) => {
 
   p.setup = () => {
     // put setup code here
+    // p.createCanvas(p.windowHeight,p.windowHeight);
     windowFlexSize(true);
     //p.background(211); // lightgray
     p.colorMode(p.HSB, 1.0, 1.0, 1.0, 1.0);
     bgColor = p.color(0, 0, 211 / 255);
 
-    p.background(bgColor);
-    //p.noFill();
-    p.noStroke();
+    // p.background(bgColor);
+    p.noFill();
+    // p.noStroke();
     p.noLoop();
-    console.log(p._isGlobal)
   };
 
   p.draw = () => {
     // put drawing code here
     p.background(bgColor);
-    // p.background(0);
+
     const cx = w / 2;
     const cy = h / 2;
 
-    const step = Math.max(w, h) / div;
-
+    const steps = Math.max(w, h) / div;
 
     const sizeMul = 0.5;
-    const size = step / sizeMul;
+    const size = steps / sizeMul;
 
 
     const s = p.millis() / 100;
 
     for (let _y = 0; _y <= div; _y++) {
       for (let _x = 0; _x <= div; _x++) {
-        const x = _x * step;
-        const y = _y * step;
+        const x = _x * steps;
+        const y = _y * steps;
 
         //const hNoise = p.noise((_x + s) * mul, (_y + s) * mul, s * mul);
         //const hNoise = p.noise(_x * mul, _y * mul, s * mul);
@@ -59,6 +58,13 @@ const sketch = (p) => {
     }
   };
 
+  // p.windowResized = (e) => {
+  // }
+  function windowResized(e) {
+    windowFlexSize(true);
+    
+  }
+
 
   function windowFlexSize(isFullSize = false) {
     const isInitialize =
@@ -69,17 +75,17 @@ const sketch = (p) => {
       : [setupWidth, setupHeight];
 
     const sizeRatio = 0.92;
-    const windowWidth = p.windowWidth * sizeRatio;
-    const windowHeight = p.windowHeight * sizeRatio;
+    const windowWidthSize = p.windowWidth * sizeRatio;
+    const windowHeightSize = p.windowHeight * sizeRatio;
 
     if (isFullSize) {
-      w = windowWidth;
-      h = windowHeight;
+      w = windowWidthSize;
+      h = windowHeightSize;
     } else {
       const widthRatio =
-        windowWidth < setupWidth ? windowWidth / setupWidth : 1;
+        windowWidthSize < setupWidth ? windowWidthSize / setupWidth : 1;
       const heightRatio =
-        windowHeight < setupHeight ? windowHeight / setupHeight : 1;
+        windowHeightSize < setupHeight ? windowHeightSize / setupHeight : 1;
 
       setupRatio = Math.min(widthRatio, heightRatio);
       w = setupWidth * setupRatio;
@@ -103,10 +109,4 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   // --- start
   const myp5 = new p5(sketch, canvasTag);
-  //console.log(p5)
-  console.log(p5.instance)
-  console.log(myp5.instance)
-  //console.log(window)
-  //console.log(myp5)
-  
 });

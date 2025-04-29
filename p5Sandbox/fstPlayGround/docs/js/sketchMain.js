@@ -6,7 +6,7 @@ const title = 'Perlin noise';
 const sketch = (p) => {
   let w, h;
   let setupWidth, setupHeight, setupRatio;
-  
+
   const div = 256;
   const mul = 0.01;
   const amp = 100;
@@ -22,7 +22,7 @@ const sketch = (p) => {
     p.background(bgColor);
     //p.noFill();
     p.noStroke();
-    //p.noLoop();
+    p.noLoop();
   };
 
   p.draw = () => {
@@ -33,11 +33,11 @@ const sketch = (p) => {
     const cy = h / 2;
 
     const step = Math.max(w, h) / div;
-    
+
 
     const sizeMul = 0.5;
     const size = step / sizeMul;
-    
+
 
     const s = p.millis() / 100;
 
@@ -57,12 +57,16 @@ const sketch = (p) => {
       }
     }
   };
-  
+
+  p.windowResized = (event) => {
+    windowFlexSize(true);
+  }
+
 
   function windowFlexSize(isFullSize = false) {
     const isInitialize =
       typeof setupWidth === 'undefined' || typeof setupHeight === 'undefined';
-    
+
     [setupWidth, setupHeight] = isInitialize
       ? [p.width, p.height]
       : [setupWidth, setupHeight];
@@ -94,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const canvasId = 'p5Canvas';
   const canvasTag = document.querySelector(`#${canvasId}`);
   canvasTag.style.backgroundColor = 'darkgray';
-  
+
   //document.body.style.backgroundColor = '#121212';
 
   canvasTag.addEventListener('touchmove', (e) => e.preventDefault(), {
