@@ -24,4 +24,5 @@ const soundSet = () => {
 };
 
 
-export default [p5Set(), soundSet(),];
+//export default [p5Set(), soundSet(),];
+export default [soundSet(),];

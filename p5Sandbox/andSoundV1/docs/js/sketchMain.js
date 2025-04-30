@@ -1,10 +1,11 @@
 import { p5 } from './lib/p5.bundle.js';
-import { p5sound } from './lib/addons/p5sound.bundle.js';
+import './lib/addons/p5sound.bundle.js';
 
+console.log(window.p5)
 
-console.log(p5sound);
 
 const title = 'Perlin noise';
+
 
 const sketch = (p) => {
   let w, h;
@@ -25,45 +26,21 @@ const sketch = (p) => {
     p.background(bgColor);
     //p.noFill();
     p.noStroke();
-    p.noLoop();
+    
+    
+    //const osc = new p5sound.Oscillator('sine')
+    //p.noLoop();
+    //console.log(p.Oscillator)
   };
 
   p.draw = () => {
     // put drawing code here
-    p.background(bgColor);
-    // p.background(0);
-    const cx = w / 2;
-    const cy = h / 2;
 
-    const step = Math.max(w, h) / div;
-
-
-    const sizeMul = 0.5;
-    const size = step / sizeMul;
-
-
-    const s = p.millis() / 100;
-
-    for (let _y = 0; _y <= div; _y++) {
-      for (let _x = 0; _x <= div; _x++) {
-        const x = _x * step;
-        const y = _y * step;
-
-        //const hNoise = p.noise((_x + s) * mul, (_y + s) * mul, s * mul);
-        //const hNoise = p.noise(_x * mul, _y * mul, s * mul);
-        const hNoise = p.noise((_x + s) * mul, (_y + s) * mul, s * mul);
-
-        //p.fill(hNoise);
-        p.fill(hNoise, 1, 1);
-        p.ellipse(x, y, size, size);
-        //p.ellipse(x, y, size * hNoise, size * hNoise);
-      }
-    }
   };
 
   p.windowResized = (event) => {
     windowFlexSize(true);
-  }
+  };
 
 
   function windowFlexSize(isFullSize = false) {
