@@ -43,6 +43,7 @@ const sketch = (p) => {
 
   };
   p.touchStarted = (e) => {
+    console.log(p.getAudioContext().state)
     if (p.getAudioContext().state !== 'running') {
       p.getAudioContext().resume();
     }
@@ -97,5 +98,6 @@ document.addEventListener('DOMContentLoaded', () => {
     passive: false,
   });
   // --- start
-  new p5(sketch, canvasTag);
+  const myp5 = new p5(sketch, canvasTag);
+  console.log(myp5)
 });
