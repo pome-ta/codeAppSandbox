@@ -1,10 +1,27 @@
 import { p5 } from './lib/p5.bundle.js';
 import './lib/addons/p5sound.bundle.js';
 
-console.log(window.p5)
+//console.log(window.p5)
 
 
-const title = 'Perlin noise';
+const title = 'sound test';
+
+// 着火のおまじない
+function initAudioContext() {
+  document.removeEventListener(tapEnd, initAudioContext);
+  // wake up AudioContext
+  console.log('g');
+  actx.resume();
+}
+
+const tapStart =
+  typeof document.ontouchstart !== 'undefined' ? 'touchstart' : 'mousedown';
+const tapEnd =
+  typeof document.ontouchend !== 'undefined' ? 'touchend' : 'mouseup';
+document.addEventListener(tapEnd, initAudioContext);
+
+const AudioContext = window.AudioContext || window.webkitAudioContext;
+const actx = new AudioContext();
 
 
 const sketch = (p) => {
@@ -31,6 +48,10 @@ const sketch = (p) => {
     //const osc = new p5sound.Oscillator('sine')
     //p.noLoop();
     //console.log(p.Oscillator)
+    const osc = new p5.Oscillator('sine');
+    osc.start();
+    console.log(osc)
+    
   };
 
   p.draw = () => {
