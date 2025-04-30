@@ -1,28 +1,11 @@
 import { p5 } from './lib/p5.bundle.js';
 import './lib/addons/p5sound.bundle.js';
 
-//console.log(window.p5)
 
 
 const title = 'sound test';
 
-// 着火のおまじない
-function initAudioContext() {
-  document.removeEventListener(tapEnd, initAudioContext);
-  // wake up AudioContext
-  console.log('g');
-  actx.resume();
-}
-
-const tapStart =
-  typeof document.ontouchstart !== 'undefined' ? 'touchstart' : 'mousedown';
-const tapEnd =
-  typeof document.ontouchend !== 'undefined' ? 'touchend' : 'mouseup';
-document.addEventListener(tapEnd, initAudioContext);
-
-const AudioContext = window.AudioContext || window.webkitAudioContext;
-const actx = new AudioContext();
-
+// console.log(p5.getAudioContext())
 
 const sketch = (p) => {
   let w, h;
@@ -43,21 +26,29 @@ const sketch = (p) => {
     p.background(bgColor);
     //p.noFill();
     p.noStroke();
-    
-    
+
+
     //const osc = new p5sound.Oscillator('sine')
     //p.noLoop();
     //console.log(p.Oscillator)
-    const osc = new p5.Oscillator('sine');
+    const osc = new p5.SinOsc();
     osc.start();
     console.log(osc)
-    
+    console.log(p.getAudioContext())
+
   };
 
   p.draw = () => {
     // put drawing code here
 
   };
+  p.touchStarted = (e) => {
+    if (p.getAudioContext().state !== 'running') {
+      p.getAudioContext().resume();
+    }
+
+
+  }
 
   p.windowResized = (event) => {
     windowFlexSize(true);

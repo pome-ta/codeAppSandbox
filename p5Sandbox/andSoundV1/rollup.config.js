@@ -17,12 +17,12 @@ const soundSet = () => {
     input: './docs/js/srcBundles/p5SoundBundles.js',
     output: {
       file: './docs/js/lib/addons/p5sound.bundle.js',
-      format: 'esm',
+      format: 'iife',
     },
     plugins: [nodeResolve(), commonjs(),],
   };
 };
 
 
-//export default [p5Set(), soundSet(),];
-export default [soundSet(),];
+export default [p5Set(), soundSet(),];
+// export default [soundSet(),];
