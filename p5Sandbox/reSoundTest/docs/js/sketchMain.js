@@ -1,11 +1,9 @@
-import  {p5}  from './lib/p5.bundle.js';
+import { p5 } from './lib/p5.bundle.js';
 import './lib/addons/p5.sound.bundle.js';
 import { EventWrapper } from './EventWrapper.js';
 
 const title = 'sound test';
 const eventWrap = new EventWrapper();
-
-
 
 const sketch = (p) => {
   let w, h;
@@ -28,23 +26,22 @@ const sketch = (p) => {
     //p.noFill();
     p.noStroke();
 
-
     //const osc = new p5sound.Oscillator('sine')
     //p.noLoop();
     //console.log(p.Oscillator)
     osc = new p5.SinOsc();
     osc.start();
-    
+
   };
 
   p.draw = () => {
     // put drawing code here
 
   };
-  
+
   p.touchStarted = (e) => {
   }
-  
+
 
   p.windowResized = (event) => {
     windowFlexSize(true);
@@ -86,25 +83,25 @@ document.addEventListener('DOMContentLoaded', () => {
   const canvasId = 'p5Canvas';
   const canvasTag = document.querySelector(`#${canvasId}`);
   canvasTag.style.backgroundColor = 'darkgray';
-  
+
   canvasTag.addEventListener(eventWrap.move, (e) => e.preventDefault(), {
     passive: false,
   });
 
   document.body.style.backgroundColor = '#121212';
-  
+
   // --- start
   const myp5 = new p5(sketch, canvasTag);
   myp5.getAudioContext().resume().then(() => {
-        wrapDiv.style.backgroundColor = isRunningColor;
-      });
-  
+    wrapDiv.style.backgroundColor = isRunningColor;
+  });
+
   const wrapDiv = document.querySelector('#wrap');
   const isRunningColor = wrapDiv.style.backgroundColor
   const isSuspendedColor = 'maroon';
   wrapDiv.style.backgroundColor = isSuspendedColor;
-  
-  
+
+
   // todo: wake up AudioContext
   function initAudioContext() {
     //console.log(myp5.getAudioContext().state)
