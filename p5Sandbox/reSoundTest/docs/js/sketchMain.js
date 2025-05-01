@@ -9,37 +9,60 @@ const sketch = (p) => {
   let w, h;
   let setupWidth, setupHeight, setupRatio;
 
-  const div = 256;
-  const mul = 0.01;
-  const amp = 100;
   let bgColor;
-  let osc;
+  let sinOsc;
+  let fft;
 
   p.setup = () => {
     // put setup code here
     windowFlexSize(true);
-    //p.background(211); // lightgray
     p.colorMode(p.HSB, 1.0, 1.0, 1.0, 1.0);
-    bgColor = p.color(0, 0, 211 / 255);
-
+    bgColor = p.color(0, 0, 64 / 255);
     p.background(bgColor);
-    //p.noFill();
-    p.noStroke();
+    
+    sinOsc = new p5.SinOsc();
+    // sinOsc.start();
 
-    //const osc = new p5sound.Oscillator('sine')
-    //p.noLoop();
-    //console.log(p.Oscillator)
-    osc = new p5.SinOsc();
-    osc.start();
+    fft = new p5.FFT();
 
+    // p.frameRate(0.5);
+    // p.noLoop();
   };
 
   p.draw = () => {
     // put drawing code here
+    p.background(bgColor);
 
+    let spectrum = fft.analyze();
+    p.noStroke();
+    p.fill(0.2, 0.5, 0.8);
+    for (let i = 0; i < spectrum.length; i++) {
+      let x = p.map(i, 0, spectrum.length, 0, p.width);
+      let h = -p.height + p.map(spectrum[i], 0, 255, p.height, 0);
+      p.rect(x, p.height, p.width / spectrum.length, h);
+    }
+
+    let waveform = fft.waveform();
+    p.noFill();
+    p.beginShape();
+    p.stroke(0.8, 0.5, 0.8);
+    for (let i = 0; i < waveform.length; i++) {
+      let x = p.map(i, 0, waveform.length, 0, p.width);
+      let y = p.map(waveform[i], -1, 1, 0, p.height);
+      p.vertex(x, y);
+    }
+    p.endShape();
+
+    p.noStroke();
+    p.fill(0.0, 0.0, 0.8);
+
+    p.textAlign(p.CENTER, p.CENTER);
+    p.textSize(32);
+    p.text('on tap play', p.width / 2, p.height / 2)
   };
 
   p.touchStarted = (e) => {
+    sinOsc.started ? sinOsc.stop() : sinOsc.start();
   }
 
 
@@ -92,42 +115,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- start
   const myp5 = new p5(sketch, canvasTag);
-  
-
+  // todo: set up for sound
   const wrapDiv = document.querySelector('#wrap');
   const isRunningColor = wrapDiv.style.backgroundColor
   const isSuspendedColor = 'maroon';
-  //wrapDiv.style.backgroundColor = isSuspendedColor;
 
-  //console.log(myp5.getAudioContext().state)
-  
-  myp5.getAudioContext().onstatechange = (e) => myp5.getAudioContext().state !== 'running' ? notResume() : null;
+  const ctx = myp5.getAudioContext();
+  ctx.addEventListener('statechange', (e) => ctx.state !== 'running' ? notResume() : null);
 
 
-
-  // todo: wake up AudioContext
-  /*
-  function resumeAudioContext() {
-    console.log('e')
-    myp5.getAudioContext().resume().then(() => {
-      wrapDiv.style.backgroundColor = isRunningColor;
-    });
-      
-    document.removeEventListener(eventWrap.end, resumeAudioContext);
-  }
-  */
   const isResume = () => {
-    myp5.getAudioContext().resume().then(() => {
+    ctx.resume().then(() => {
       wrapDiv.style.backgroundColor = isRunningColor;
     });
-      
     document.removeEventListener(eventWrap.end, isResume);
   }
-  
   const notResume = () => {
     wrapDiv.style.backgroundColor = isSuspendedColor;
     document.addEventListener(eventWrap.end, isResume);
   };
-  notResume();
-});
 
+  ctx.suspend().then(() => notResume());
+
+
+});
