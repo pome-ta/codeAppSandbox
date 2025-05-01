@@ -226,6 +226,7 @@ class WebViewController(UIViewController):
                  ctypes.c_bool,
                ])
     #print(f'\t{NSStringFromClass(__class__)}: viewWillDisappear_')
+    self.wkWebView.reloadFromOrigin()
 
   @objc_method
   def viewDidDisappear_(self, animated: bool):

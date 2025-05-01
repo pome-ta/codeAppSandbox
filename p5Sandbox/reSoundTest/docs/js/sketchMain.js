@@ -1,11 +1,11 @@
 import  {p5}  from './lib/p5.bundle.js';
 import './lib/addons/p5.sound.bundle.js';
+import { EventWrapper } from './EventWrapper.js';
 
-
-console.log('hoge')
 const title = 'sound test';
+const eventWrap = new EventWrapper();
 
-// console.log(p5.getAudioContext())
+
 
 const sketch = (p) => {
   let w, h;
@@ -40,14 +40,15 @@ const sketch = (p) => {
     // put drawing code here
 
   };
+  
+  /*
   p.touchStarted = (e) => {
     console.log(p.getAudioContext().state)
     if (p.getAudioContext().state !== 'running') {
       p.getAudioContext().resume();
     }
-
-
   }
+  */
 
   p.windowResized = (event) => {
     windowFlexSize(true);
@@ -89,13 +90,27 @@ document.addEventListener('DOMContentLoaded', () => {
   const canvasId = 'p5Canvas';
   const canvasTag = document.querySelector(`#${canvasId}`);
   canvasTag.style.backgroundColor = 'darkgray';
-
-  //document.body.style.backgroundColor = '#121212';
-
-  canvasTag.addEventListener('touchmove', (e) => e.preventDefault(), {
+  // 
+  canvasTag.addEventListener(eventWrap.move, (e) => e.preventDefault(), {
     passive: false,
   });
+
+  //document.body.style.backgroundColor = '#121212';
+  const isRunningColor = document.body.style.backgroundColor
+  const isSuspendedColor = 'red';
   // --- start
   const myp5 = new p5(sketch, canvasTag);
   //console.log(myp5)
+  
+  const setColor = (p) => {
+    document.body.style.backgroundColor = p.getAudioContext().state !== 'running' ? isRunningColor : isSuspendedColor;
+    
+  }
+  
+  // todo: wake up AudioContext
+  function initAudioContext() {
+    document.removeEventListener(eventWrap.start, initAudioContext);
+    myp5.getAudioContext().resume();
+  }
+  document.addEventListener(eventWrap.start, initAudioContext);
 });
