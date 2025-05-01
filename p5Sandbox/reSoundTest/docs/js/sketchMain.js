@@ -100,16 +100,9 @@ document.addEventListener('DOMContentLoaded', () => {
   //wrapDiv.style.backgroundColor = isSuspendedColor;
 
   //console.log(myp5.getAudioContext().state)
+  
+  myp5.getAudioContext().onstatechange = (e) => myp5.getAudioContext().state !== 'running' ? notResume() : null;
 
-  myp5.getAudioContext().onstatechange = (e) => {
-    myp5.getAudioContext().state !== 'running' ? notResume() : null;
-    
-    /*
-    if (myp5.getAudioContext().state !== 'running') {
-      notResume();
-    }
-    */
-  }
 
 
   // todo: wake up AudioContext
@@ -134,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const notResume = () => {
     wrapDiv.style.backgroundColor = isSuspendedColor;
     document.addEventListener(eventWrap.end, isResume);
-  }
+  };
   notResume();
 });
 
