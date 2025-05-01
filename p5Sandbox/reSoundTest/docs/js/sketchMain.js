@@ -101,10 +101,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const isSuspendedColor = 'maroon';
   wrapDiv.style.backgroundColor = isSuspendedColor;
 
+  console.log(myp5.getAudioContext().state)
+
+  myp5.getAudioContext().onstatechange = (e) => {
+    console.log(e)
+    console.log(myp5.getAudioContext().state)
+  }
+
 
   // todo: wake up AudioContext
   function initAudioContext() {
     //console.log(myp5.getAudioContext().state)
+    console.log('init')
     if (myp5.getAudioContext().state !== 'running') {
       myp5.getAudioContext().resume().then(() => {
         wrapDiv.style.backgroundColor = isRunningColor;
