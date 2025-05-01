@@ -12,10 +12,6 @@ const sketch = (p) => {
   let bgColor;
   let sinOsc;
   let fft;
-  
-  
-  let touchX = null;
-  let touchY = null;
 
   p.setup = () => {
     // put setup code here
@@ -59,36 +55,14 @@ const sketch = (p) => {
 
     p.noStroke();
     p.fill(0.0, 0.0, 0.8);
-    
-    
-    if (touchX !== null || touchY !== null) {
-      p.textAlign(p.CENTER, p.CENTER);
-      p.textSize(32);
-      p.text(`${touchX}`, p.width / 2, p.height / 2);
-    }
 
-    
+    p.textAlign(p.CENTER, p.CENTER);
+    p.textSize(32);
+    p.text('on tap play', p.width / 2, p.height / 2)
   };
 
   p.touchStarted = (e) => {
-    sinOsc.start();
-  }
-  
-  p.touchMoved = (e) => {
-    for (let touch of p.touches) {
-      touchX = touch.x;
-      touchY = touch.y
-    }
-    //console.log(sinOsc)
-    sinOsc.freq(touchX)
-    
-  }
-    
-  
-  p.touchEnded = (e) => {
-    touchX = null;
-    touchY = null;
-    sinOsc.stop();
+    sinOsc.started ? sinOsc.stop() : sinOsc.start();
   }
 
 
@@ -105,7 +79,7 @@ const sketch = (p) => {
       ? [p.width, p.height]
       : [setupWidth, setupHeight];
 
-    const sizeRatio = 0.5;
+    const sizeRatio = 0.92;
     const windowWidth = p.windowWidth * sizeRatio;
     const windowHeight = p.windowHeight * sizeRatio;
 
@@ -132,11 +106,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const canvasId = 'p5Canvas';
   const canvasTag = document.querySelector(`#${canvasId}`);
   canvasTag.style.backgroundColor = 'darkgray';
-  
+
   canvasTag.addEventListener(eventWrap.move, (e) => e.preventDefault(), {
     passive: false,
   });
-  
 
   document.body.style.backgroundColor = '#121212';
 
@@ -163,8 +136,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener(eventWrap.end, isResume);
   };
 
-  ctx.suspend().then(() => notResume()).catch((error)=>console.log('h'));
+
   notResume();
 
-
 });
+
