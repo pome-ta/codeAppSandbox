@@ -15,6 +15,7 @@ const sketch = (p) => {
   const mul = 0.01;
   const amp = 100;
   let bgColor;
+  let osc;
 
   p.setup = () => {
     // put setup code here
@@ -31,7 +32,7 @@ const sketch = (p) => {
     //const osc = new p5sound.Oscillator('sine')
     //p.noLoop();
     //console.log(p.Oscillator)
-    const osc = new p5.SinOsc();
+    osc = new p5.SinOsc();
     osc.start();
     
   };
@@ -41,16 +42,8 @@ const sketch = (p) => {
 
   };
   
-  /*
   p.touchStarted = (e) => {
-  p.getAudioContext().resume();
-  
-    console.log(p.getAudioContext().state)
-    if (p.getAudioContext().state !== 'running') {
-      p.getAudioContext().resume();
-    }
   }
-  */
   
 
   p.windowResized = (event) => {
@@ -93,34 +86,36 @@ document.addEventListener('DOMContentLoaded', () => {
   const canvasId = 'p5Canvas';
   const canvasTag = document.querySelector(`#${canvasId}`);
   canvasTag.style.backgroundColor = 'darkgray';
-  // 
+  
   canvasTag.addEventListener(eventWrap.move, (e) => e.preventDefault(), {
     passive: false,
   });
 
-  //document.body.style.backgroundColor = '#121212';
-  const isRunningColor = document.body.style.backgroundColor
-  const isSuspendedColor = 'red';
+  document.body.style.backgroundColor = '#121212';
+  
   // --- start
   const myp5 = new p5(sketch, canvasTag);
-  document.body.style.backgroundColor = isSuspendedColor;
-  //console.log(myp5)
+  myp5.getAudioContext().resume().then(() => {
+        wrapDiv.style.backgroundColor = isRunningColor;
+      });
   
-  const setColor = (p) => {
-    document.body.style.backgroundColor = p.getAudioContext().state !== 'running' ? isRunningColor : isSuspendedColor;
-    
-  }
+  const wrapDiv = document.querySelector('#wrap');
+  const isRunningColor = wrapDiv.style.backgroundColor
+  const isSuspendedColor = 'maroon';
+  wrapDiv.style.backgroundColor = isSuspendedColor;
+  
   
   // todo: wake up AudioContext
   function initAudioContext() {
-    console.log(myp5.getAudioContext().state)
+    //console.log(myp5.getAudioContext().state)
     if (myp5.getAudioContext().state !== 'running') {
       myp5.getAudioContext().resume().then(() => {
-        document.body.style.backgroundColor = isRunningColor;
+        wrapDiv.style.backgroundColor = isRunningColor;
       });
       return;
     }
     //document.removeEventListener(eventWrap.start, initAudioContext);
   }
-  document.addEventListener(eventWrap.start, initAudioContext);
+  document.addEventListener(eventWrap.end, initAudioContext);
 });
+
