@@ -92,35 +92,49 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- start
   const myp5 = new p5(sketch, canvasTag);
-  myp5.getAudioContext().resume().then(() => {
-    wrapDiv.style.backgroundColor = isRunningColor;
-  });
+  
 
   const wrapDiv = document.querySelector('#wrap');
   const isRunningColor = wrapDiv.style.backgroundColor
   const isSuspendedColor = 'maroon';
-  wrapDiv.style.backgroundColor = isSuspendedColor;
+  //wrapDiv.style.backgroundColor = isSuspendedColor;
 
-  console.log(myp5.getAudioContext().state)
+  //console.log(myp5.getAudioContext().state)
 
   myp5.getAudioContext().onstatechange = (e) => {
-    console.log(e)
-    console.log(myp5.getAudioContext().state)
+    myp5.getAudioContext().state !== 'running' ? notResume() : null;
+    
+    /*
+    if (myp5.getAudioContext().state !== 'running') {
+      notResume();
+    }
+    */
   }
 
 
   // todo: wake up AudioContext
-  function initAudioContext() {
-    //console.log(myp5.getAudioContext().state)
-    console.log('init')
-    if (myp5.getAudioContext().state !== 'running') {
-      myp5.getAudioContext().resume().then(() => {
-        wrapDiv.style.backgroundColor = isRunningColor;
-      });
-      return;
-    }
-    //document.removeEventListener(eventWrap.start, initAudioContext);
+  /*
+  function resumeAudioContext() {
+    console.log('e')
+    myp5.getAudioContext().resume().then(() => {
+      wrapDiv.style.backgroundColor = isRunningColor;
+    });
+      
+    document.removeEventListener(eventWrap.end, resumeAudioContext);
   }
-  document.addEventListener(eventWrap.end, initAudioContext);
+  */
+  const isResume = () => {
+    myp5.getAudioContext().resume().then(() => {
+      wrapDiv.style.backgroundColor = isRunningColor;
+    });
+      
+    document.removeEventListener(eventWrap.end, isResume);
+  }
+  
+  const notResume = () => {
+    wrapDiv.style.backgroundColor = isSuspendedColor;
+    document.addEventListener(eventWrap.end, isResume);
+  }
+  notResume();
 });
 
