@@ -10,7 +10,8 @@ html {
 
 body {
   /*background-color: #1b1b1b;*/
-  background-color: lightgray;
+  /*background-color: lightgray;*/
+  background-color: #292a33;
   height: 100dvh;
   margin: auto;
 }
@@ -20,7 +21,7 @@ body {
   width: 100%;
   /*height: 100%;*/
   height: 100dvh;
-  background-color: #292a33;
+  /*background-color: #292a33;*/
 
   display: flex;
   justify-content: center;

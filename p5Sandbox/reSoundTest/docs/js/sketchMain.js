@@ -43,12 +43,15 @@ const sketch = (p) => {
   
   /*
   p.touchStarted = (e) => {
+  p.getAudioContext().resume();
+  
     console.log(p.getAudioContext().state)
     if (p.getAudioContext().state !== 'running') {
       p.getAudioContext().resume();
     }
   }
   */
+  
 
   p.windowResized = (event) => {
     windowFlexSize(true);
@@ -100,6 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const isSuspendedColor = 'red';
   // --- start
   const myp5 = new p5(sketch, canvasTag);
+  document.body.style.backgroundColor = isSuspendedColor;
   //console.log(myp5)
   
   const setColor = (p) => {
@@ -109,8 +113,14 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // todo: wake up AudioContext
   function initAudioContext() {
-    document.removeEventListener(eventWrap.start, initAudioContext);
-    myp5.getAudioContext().resume();
+    console.log(myp5.getAudioContext().state)
+    if (myp5.getAudioContext().state !== 'running') {
+      myp5.getAudioContext().resume().then(() => {
+        document.body.style.backgroundColor = isRunningColor;
+      });
+      return;
+    }
+    //document.removeEventListener(eventWrap.start, initAudioContext);
   }
   document.addEventListener(eventWrap.start, initAudioContext);
 });
