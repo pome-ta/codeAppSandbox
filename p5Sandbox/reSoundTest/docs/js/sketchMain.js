@@ -101,7 +101,7 @@ const sketch = (p) => {
 
     sinOsc.freq(frqRatio(touchX));
     sinOsc.amp(valueRatio(touchY));
-    sinOsc.start();
+    //sinOsc.start();
     
   };
 
@@ -129,7 +129,6 @@ const sketch = (p) => {
     for (let touch of p.touches) {
       touchX = 0 <= touch.x && touch.x <= p.width ? touch.x : null;
       touchY = 0 <= touch.y && touch.y <= p.height ? touch.y : null;
-      //if (0 <= touch.x && touch.x <= p.width )
     }
   }
 
