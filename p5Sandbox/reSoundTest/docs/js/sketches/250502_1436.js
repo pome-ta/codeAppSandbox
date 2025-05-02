@@ -1,9 +1,8 @@
-
 import { p5 } from './lib/p5.bundle.js';
 import './lib/addons/p5.sound.bundle.js';
 import { EventWrapper } from './EventWrapper.js';
 
-const title = 'tap mark';
+const title = 'sound test';
 const eventWrap = new EventWrapper();
 
 const sketch = (p) => {
@@ -13,20 +12,18 @@ const sketch = (p) => {
   let bgColor;
   let sinOsc;
   let fft;
-
+  
   const frq = 440;
   let touchX = null;
   let touchY = null;
-
-  let pg;
 
   p.setup = () => {
     // put setup code here
     windowFlexSize(true);
     p.colorMode(p.HSB, 1.0, 1.0, 1.0, 1.0);
     bgColor = p.color(0, 0, 64 / 255);
-    //p.background(bgColor);
-
+    p.background(bgColor);
+    
     sinOsc = new p5.SinOsc();
     //sinOsc.start();
 
@@ -34,30 +31,13 @@ const sketch = (p) => {
     p.textAlign(p.CENTER, p.CENTER);
     p.textSize(32);
 
-    pg = p.createGraphics(p.width / 2, p.height / 2);
-    //pg.style("display", "");
-    //pg.position(0, 0)
-
-    pg.background(p.color(0.5, 0.8, 128 / 255));
-    pg.ellipse(pg.width / 2, pg.height / 2, 50, 50);
-
-    //p.image(pg, 0, 0)
-    //console.log(pg)
-
     // p.frameRate(0.5);
-    //p.noLoop();
+    // p.noLoop();
   };
 
   p.draw = () => {
     // put drawing code here
     p.background(bgColor);
-    //p.image(pg, 0, 0)
-    console.log('d');
-    //pg.background(p.color(0.8, 0.8, 128 / 255));
-    //pg.ellipse(pg.width / 2, pg.height / 2, 50, 50);
-
-    //p.image(pg, 0, 0)
-    //pg.style("display", "");
 
     let spectrum = fft.analyze();
     p.noStroke();
@@ -81,63 +61,63 @@ const sketch = (p) => {
 
     p.noStroke();
     p.fill(0.0, 0.0, 0.8);
-
+    
+    
     if (touchX !== null || touchY !== null) {
       p.text(`${sinOsc.f}`, p.width / 2, p.height / 2);
     }
 
-    pg.background(p.color(0.8, 0.8, 128 / 255));
-    p.image(pg, 0, 0);
-    //pg.translate(0,0)
-    //pg.ellipse(pg.width / 2, pg.height / 2, 50, 50);
+    
   };
 
   p.touchStarted = (e) => {
     getTouchXY();
-
+    
     sinOsc.freq(frqRatio(touchX));
     sinOsc.start();
     //sinOsc.amp(1);
-  };
-
+  }
+  
   p.touchMoved = (e) => {
     getTouchXY();
     sinOsc.freq(frqRatio(touchX));
-  };
-
+    
+  }
+    
+  
   p.touchEnded = (e) => {
     touchX = null;
     touchY = null;
     sinOsc.stop();
     //sinOsc.amp(0,1);
-  };
+    
+  }
+
 
   p.windowResized = (event) => {
     windowFlexSize(true);
-    pg.resizeCanvas(p.width / 2, p.height / 2);
-    //pg.background(p.color(0., 0.8, 128 / 255));
-    //p.image(pg, 0, 0)
-    //pg.translate(0,0)
-    //pg.style("display", "");
   };
-
+  
+  
   function getTouchXY() {
     for (let touch of p.touches) {
-      touchX = 0 <= touch.x && touch.x <= p.width ? touch.x : null;
-      touchY = 0 <= touch.y && touch.y <= p.height ? touch.y : null;
+      touchX = (0 <= touch.x && touch.x <= p.width) ? touch.x : null;
+      touchY = (0 <= touch.y && touch.y <= p.height) ? touch.y : null;
       //if (0 <= touch.x && touch.x <= p.width )
+      
     }
   }
-
+  
   function frqRatio(v) {
-    const fr = (v / (p.width / 2)) * frq;
+    const fr = v / (p.width / 2) * frq;
     return Math.ceil(fr * 1000) / 1000;
   }
+  
+
 
   function windowFlexSize(isFullSize = false) {
     const isInitialize =
-      typeof setupWidth === 'undefined' ||
-      typeof setupHeight === 'undefined';
+      typeof setupWidth === 'undefined' || typeof setupHeight === 'undefined';
 
     [setupWidth, setupHeight] = isInitialize
       ? [p.width, p.height]
@@ -170,10 +150,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const canvasId = 'p5Canvas';
   const canvasTag = document.querySelector(`#${canvasId}`);
   canvasTag.style.backgroundColor = 'darkgray';
-
+  
   canvasTag.addEventListener(eventWrap.move, (e) => e.preventDefault(), {
     passive: false,
   });
+  
 
   document.body.style.backgroundColor = '#121212';
 
@@ -181,25 +162,26 @@ document.addEventListener('DOMContentLoaded', () => {
   const myp5 = new p5(sketch, canvasTag);
   // todo: set up for sound
   const wrapDiv = document.querySelector('#wrap');
-  const isRunningColor = wrapDiv.style.backgroundColor;
+  const isRunningColor = wrapDiv.style.backgroundColor
   const isSuspendedColor = 'maroon';
 
   const ctx = myp5.getAudioContext();
-  ctx.addEventListener('statechange', (e) =>
-    ctx.state !== 'running' ? notResume() : null,
-  );
+  ctx.addEventListener('statechange', (e) => ctx.state !== 'running' ? notResume() : null);
+  
+
 
   const isResume = () => {
     ctx.resume().then(() => {
       wrapDiv.style.backgroundColor = isRunningColor;
     });
     document.removeEventListener(eventWrap.end, isResume);
-  };
+  }
   const notResume = () => {
     wrapDiv.style.backgroundColor = isSuspendedColor;
     document.addEventListener(eventWrap.end, isResume);
   };
-
+  
   notResume();
+
 });
 
