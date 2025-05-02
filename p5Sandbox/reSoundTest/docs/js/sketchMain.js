@@ -15,8 +15,10 @@ const sketch = (p) => {
   let fft;
 
   const frq = 440;
+  let gainValue;
   let touchX = null;
   let touchY = null;
+  const delayTime = 0.2;
 
   let pg;
 
@@ -29,6 +31,8 @@ const sketch = (p) => {
 
     sinOsc = new p5.SinOsc();
     //sinOsc.start();
+    gainValue = sinOsc.output.gain.value
+    //console.log(gainValue)
 
     fft = new p5.FFT();
     p.textAlign(p.CENTER, p.CENTER);
@@ -52,7 +56,7 @@ const sketch = (p) => {
     // put drawing code here
     p.background(bgColor);
     //p.image(pg, 0, 0)
-    console.log('d');
+    //console.log('d');
     //pg.background(p.color(0.8, 0.8, 128 / 255));
     //pg.ellipse(pg.width / 2, pg.height / 2, 50, 50);
 
@@ -87,7 +91,7 @@ const sketch = (p) => {
     }
 
     pg.background(p.color(0.8, 0.8, 128 / 255));
-    p.image(pg, 0, 0);
+    //p.image(pg, 0, 0);
     //pg.translate(0,0)
     //pg.ellipse(pg.width / 2, pg.height / 2, 50, 50);
   };
@@ -96,29 +100,29 @@ const sketch = (p) => {
     getTouchXY();
 
     sinOsc.freq(frqRatio(touchX));
+    sinOsc.amp(valueRatio(touchY));
     sinOsc.start();
-    //sinOsc.amp(1);
+    
   };
 
   p.touchMoved = (e) => {
     getTouchXY();
     sinOsc.freq(frqRatio(touchX));
+    sinOsc.amp(valueRatio(touchY));
   };
 
   p.touchEnded = (e) => {
     touchX = null;
     touchY = null;
-    sinOsc.stop();
-    //sinOsc.amp(0,1);
+    //
+    sinOsc.amp(0,delayTime);
+    sinOsc.stop(delayTime + 0.01);
+    
   };
 
   p.windowResized = (event) => {
     windowFlexSize(true);
     pg.resizeCanvas(p.width / 2, p.height / 2);
-    //pg.background(p.color(0., 0.8, 128 / 255));
-    //p.image(pg, 0, 0)
-    //pg.translate(0,0)
-    //pg.style("display", "");
   };
 
   function getTouchXY() {
@@ -129,9 +133,15 @@ const sketch = (p) => {
     }
   }
 
-  function frqRatio(v) {
-    const fr = (v / (p.width / 2)) * frq;
+  function frqRatio(f) {
+    const fr = (f / (p.width / 2)) * frq;
     return Math.ceil(fr * 1000) / 1000;
+  }
+  
+  function valueRatio(v) {
+    
+    const vl =  v === null ? 0 : v / p.height - 1;
+    return vl;
   }
 
   function windowFlexSize(isFullSize = false) {
