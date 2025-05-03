@@ -20,65 +20,56 @@ const sketch = (p) => {
   let touchY = null;
   const delayTime = 0.2;
 
-  let pg;
   let ts;
-  
-  
+
+
   class TapScreen {
-  
+
     tapSize = 64;
-    delayInterval = 1000 / 60;
-    baseColorHSB = [0.5, 0.8, 0.5];
-    
+    baseColrHSB = [0.2, 0.7, 0.5];
+    pgColor;
+
     constructor(mainCanvas) {
       this.p = mainCanvas;
       this.pg = null;
-      
-      
     }
-    
+
     update() {
       if (this.pg === null) {
         return;
       }
       this.p.image(this.pg, 0, 0);
     }
-    
-    createTapMark() {
+
+    initTapMark() {
       this.pg = this.pg ?? this.p.createGraphics(this.tapSize, this.tapSize);
-      
-      
-      this.p.push();
+
+  
+      this.pg.colorMode(this.pg.HSB, 1.0, 1.0, 1.0, 1.0);
+      this.pgColor = this.pg.color(...this.baseColrHSB);
+      this.pgColor.setAlpha(0.4);
+      this.pg.fill(this.pgColor);
+
       this.pg.noStroke();
-      //this.p.colorMode(this.p.RGB, 1.0, 1.0, 1.0, 1.0);
-      //this.pg.color(...this.baseColorHSB);
-      this.p.color(0.5, 0.8, 0.5);
-      
       this.pg.circle(this.tapSize / 2, this.tapSize / 2, this.tapSize);
-      
-     // this.pg.fill(this.baseColor);
-      //this.pg.fill(this.pg.color(this.baseColor, 192));
-      //console.log(this.delayInterval)
-      this.p.pop();
-      
     }
-    
+
     pgRemove() {
       this.pg?.remove();
       this.pg = null;
     }
-    
-    tapStarted(x=0, y=0) {
-      this.createTapMark();
-      
+
+    tapStarted(x = 0, y = 0) {
+      this.initTapMark();
+
     }
     taphMoved(x, y) {
     }
-    tapEnded(x=0, y=0) {
+    tapEnded(x = 0, y = 0) {
       this.pgRemove()
-      
+
     }
-    
+
     resize() {
     }
   };
@@ -88,43 +79,24 @@ const sketch = (p) => {
     windowFlexSize(true);
     p.colorMode(p.HSB, 1.0, 1.0, 1.0, 1.0);
     bgColor = p.color(0, 0, 64 / 255);
-    //p.background(bgColor);
+    // p.background(bgColor);
 
     sinOsc = new p5.SinOsc();
     //sinOsc.start();
     gainValue = sinOsc.output.gain.value
-    //console.log(gainValue)
 
     fft = new p5.FFT();
     p.textAlign(p.CENTER, p.CENTER);
     p.textSize(32);
 
-    //pg = p.createGraphics(p.width / 2, p.height / 2);
-    //console.log(pg)
-
-    //pg.background(p.color(0.5, 0.8, 128 / 255));
-    //pg.ellipse(pg.width / 2, pg.height / 2, 50, 50);
-    
-    ts = new TapScreen(p);
-    
-    
-    
-
-
+    // ts = new TapScreen(p);
     // p.frameRate(0.5);
-    //p.noLoop();
+    // p.noLoop();
   };
 
   p.draw = () => {
     // put drawing code here
     p.background(bgColor);
-    //p.image(pg, 0, 0)
-    //console.log('d');
-    //pg.background(p.color(0.8, 0.8, 128 / 255));
-    //pg.ellipse(pg.width / 2, pg.height / 2, 50, 50);
-
-    //p.image(pg, 0, 0)
-    //pg.style("display", "");
 
     let spectrum = fft.analyze();
     p.noStroke();
@@ -153,12 +125,7 @@ const sketch = (p) => {
       p.text(`${sinOsc.f}`, p.width / 2, p.height / 2);
     }
 
-    //pg.background(p.color(0.8, 0.8, 128 / 255));
-    //pg.ellipse(pg.width / 2, pg.height / 2, 50, 50);
-    //p.image(pg, 0, 0);
-    //pg.translate(0,0)
-    //pg.ellipse(pg.width / 2, pg.height / 2, 50, 50);
-    ts.update();
+    // ts.update();
   };
 
   p.touchStarted = (e) => {
@@ -166,9 +133,9 @@ const sketch = (p) => {
 
     sinOsc.freq(frqRatio(touchX));
     sinOsc.amp(valueRatio(touchY));
-    //sinOsc.start();
-    ts.tapStarted()
-    
+    sinOsc.start();
+    // ts.tapStarted()
+
   };
 
   p.touchMoved = (e) => {
@@ -180,16 +147,15 @@ const sketch = (p) => {
   p.touchEnded = (e) => {
     touchX = null;
     touchY = null;
-    //
-    sinOsc.amp(0,delayTime);
+    sinOsc.amp(0, delayTime);
     sinOsc.stop(delayTime + 0.01);
-    ts.tapEnded()
-    
+
+    // ts.tapEnded()
+
   };
 
   p.windowResized = (event) => {
     windowFlexSize(true);
-    pg.resizeCanvas(p.width / 2, p.height / 2);
   };
 
   function getTouchXY() {
@@ -203,10 +169,9 @@ const sketch = (p) => {
     const fr = (f / (p.width / 2)) * frq;
     return Math.ceil(fr * 1000) / 1000;
   }
-  
+
   function valueRatio(v) {
-    
-    const vl =  v === null ? 0 : v / p.height - 1;
+    const vl = v === null ? 0 : v / p.height - 1;
     return vl;
   }
 
@@ -277,5 +242,6 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   notResume();
+  // ctx.suspend().then(() => notResume()).catch((error)=>console.log('h'));
 });
 
