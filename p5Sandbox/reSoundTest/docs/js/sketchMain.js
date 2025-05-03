@@ -32,6 +32,7 @@ const sketch = (p) => {
     constructor(mainCanvas) {
       this.p = mainCanvas;
       this.pg = null;
+      this.baseColor = this.p.color(0.75);
       
     }
     
@@ -44,6 +45,11 @@ const sketch = (p) => {
     
     createTapMark() {
       this.pg = this.pg ?? this.p.createGraphics(this.tapSize, this.tapSize);
+      this.pg.noStroke();
+      
+     // this.pg.fill(this.baseColor);
+      //this.pg.fill(this.pg.color(this.baseColor, 192));
+      console.log(this.delayInterval)
       this.pg.circle(this.tapSize / 2, this.tapSize / 2, this.tapSize);
     }
     
@@ -59,7 +65,7 @@ const sketch = (p) => {
     taphMoved(x, y) {
     }
     tapEnded(x=0, y=0) {
-      this.p.setTimeout(this.pgRemove, this.delayInterval);
+      this.pgRemove()
       
     }
     
