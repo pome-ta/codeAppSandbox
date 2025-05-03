@@ -27,15 +27,19 @@ const sketch = (p) => {
 
     tapSize = 48;
     baseColrHSB = [0.0, 0.0, 1.0];
+    pgColor;
+    fadeCount = 60 / 10000;
 
     constructor(mainCanvas) {
       this.p = mainCanvas;
       this.pg = null;
       this.x = null;
       this.y = null;
+      this.fadeValue = 0.0;
     }
 
     update() {
+      // console.log('u')
       if (this.pg === null && this.x === null && this.y === null) {
         return;
       }
@@ -47,11 +51,45 @@ const sketch = (p) => {
 
       this.pg.colorMode(this.pg.HSB, 1.0, 1.0, 1.0, 1.0);
       this.pgColor = this.pg.color(...this.baseColrHSB);
-      this.pgColor.setAlpha(0.5);
+      // this.pgColor.setAlpha(0.4);
       this.pg.fill(this.pgColor);
 
       this.pg.noStroke();
       this.pg.circle(this.tapSize / 2, this.tapSize / 2, this.tapSize);
+    }
+
+    pgRemove() {
+      // console.log('re')
+      this.pg?.remove();
+      this.pg = null;
+      this.fadeValue = 0;
+    }
+
+
+    fadeOutMark = () => {
+      // console.log('/ ---')
+      // console.log(this.fadeValue)
+      this.fadeValue =this.fadeValue + this.fadeCount;
+      // console.log(this.fadeValue)
+      // console.log('--- /')
+      if (this.fadeValue < 1) {
+        // console.log('bool')
+        // console.log(1.0 - this.fadeValue);
+        this.pgColor.setAlpha(1.0 - this.fadeValue);
+        this.pg.fill(this.pgColor);
+        // this.initTapMark();
+        this.update();
+        // this.pgColor = this.pg.color(...this.baseColrHSB,1.0 - this.fadeValue);
+        // this.pg.fill(this.pgColor);
+   
+        
+        requestAnimationFrame(this.fadeOutMark);
+      } else {
+        this.pgRemove();
+        // return;
+      }
+      // console.log('out')
+
     }
 
     tapStarted(x, y) {
@@ -65,8 +103,7 @@ const sketch = (p) => {
       this.y = y;
     }
     tapEnded() {
-      this.pg?.remove();
-      this.pg = null;
+      // this.fadeOutMark();
       this.pgRemove();
       // this.x = null;
       // this.y = null;
@@ -141,7 +178,6 @@ const sketch = (p) => {
     getTouchXY();
     sinOsc.freq(frqRatio(touchX));
     sinOsc.amp(valueRatio(touchY));
-    
     ts.taphMoved(touchX, touchY);
   };
 
@@ -165,7 +201,7 @@ const sketch = (p) => {
         touchX = 0 <= touch.x && touch.x <= p.width ? touch.x : null;
         touchY = 0 <= touch.y && touch.y <= p.height ? touch.y : null;
       }
-    } else {  // xxx: PC 用。。。ダサい
+    } else {  // xxx: PC 用。。。ダサい
       touchX = p.mouseIsPressed && 0 <= p.mouseX && p.mouseX <= p.width ? p.mouseX : null;
       touchY = p.mouseIsPressed && 0 <= p.mouseY && p.mouseY <= p.height ? p.mouseY : null;
     }
@@ -249,3 +285,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
   notResume();
 });
+
