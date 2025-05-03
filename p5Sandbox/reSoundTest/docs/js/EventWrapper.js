@@ -1,9 +1,9 @@
 export class EventWrapper {
   constructor() {
-    [this._click, this._start, this._move, this._end] =
+    [this._click, this._start, this._move, this._end, this._isTouch] =
       /iPhone|iPad|iPod|Android/.test(navigator.userAgent)
-        ? ['click', 'touchstart', 'touchmove', 'touchend']
-        : ['click', 'mousedown', 'mousemove', 'mouseup'];
+        ? ['click', 'touchstart', 'touchmove', 'touchend', true,]
+        : ['click', 'mousedown', 'mousemove', 'mouseup', false,];
   }
 
   get click() {
@@ -20,5 +20,9 @@ export class EventWrapper {
 
   get end() {
     return this._end;
+  }
+
+  get isTouch() {
+    return this._isTouch
   }
 }

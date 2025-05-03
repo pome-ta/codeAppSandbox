@@ -26,28 +26,32 @@ const sketch = (p) => {
   class TapScreen {
 
     tapSize = 64;
-    baseColrHSB = [0.2, 0.7, 0.5];
+    baseColrHSB = [0.0, 0.0, 1.0];
     pgColor;
+    fadeCount = 60 / 10000;
 
     constructor(mainCanvas) {
       this.p = mainCanvas;
       this.pg = null;
+      this.x = null;
+      this.y = null;
+      this.fadeValue = 0.0;
     }
 
     update() {
-      if (this.pg === null) {
+      // console.log('u')
+      if (this.pg === null && this.x === null && this.y === null) {
         return;
       }
-      this.p.image(this.pg, 0, 0);
+      this.p.image(this.pg, this.x - (this.tapSize / 2), this.y - (this.tapSize / 2));
     }
 
     initTapMark() {
       this.pg = this.pg ?? this.p.createGraphics(this.tapSize, this.tapSize);
 
-  
       this.pg.colorMode(this.pg.HSB, 1.0, 1.0, 1.0, 1.0);
       this.pgColor = this.pg.color(...this.baseColrHSB);
-      this.pgColor.setAlpha(0.4);
+      // this.pgColor.setAlpha(0.4);
       this.pg.fill(this.pgColor);
 
       this.pg.noStroke();
@@ -55,22 +59,54 @@ const sketch = (p) => {
     }
 
     pgRemove() {
+      // console.log('re')
       this.pg?.remove();
       this.pg = null;
+      this.fadeValue = 0;
     }
 
-    tapStarted(x = 0, y = 0) {
+
+    fadeOutMark = () => {
+      // console.log('/ ---')
+      // console.log(this.fadeValue)
+      this.fadeValue =this.fadeValue + this.fadeCount;
+      // console.log(this.fadeValue)
+      // console.log('--- /')
+      if (this.fadeValue < 1) {
+        // console.log('bool')
+        // console.log(1.0 - this.fadeValue);
+        this.pgColor.setAlpha(1.0 - this.fadeValue);
+        this.pg.fill(this.pgColor);
+        // this.initTapMark();
+        this.update();
+        // this.pgColor = this.pg.color(...this.baseColrHSB,1.0 - this.fadeValue);
+        // this.pg.fill(this.pgColor);
+   
+        
+        requestAnimationFrame(this.fadeOutMark);
+      } else {
+        this.pgRemove();
+        // return;
+      }
+      // console.log('out')
+
+    }
+
+    tapStarted(x, y) {
       this.initTapMark();
+      this.x = x;
+      this.y = y;
 
     }
     taphMoved(x, y) {
+      this.x = x;
+      this.y = y;
     }
-    tapEnded(x = 0, y = 0) {
-      this.pgRemove()
-
-    }
-
-    resize() {
+    tapEnded() {
+      // this.fadeOutMark();
+      this.pgRemove();
+      // this.x = null;
+      // this.y = null;
     }
   };
 
@@ -79,17 +115,17 @@ const sketch = (p) => {
     windowFlexSize(true);
     p.colorMode(p.HSB, 1.0, 1.0, 1.0, 1.0);
     bgColor = p.color(0, 0, 64 / 255);
-    // p.background(bgColor);
+    p.background(bgColor);
 
     sinOsc = new p5.SinOsc();
-    //sinOsc.start();
+    // sinOsc.start();
     gainValue = sinOsc.output.gain.value
 
     fft = new p5.FFT();
     p.textAlign(p.CENTER, p.CENTER);
     p.textSize(32);
 
-    // ts = new TapScreen(p);
+    ts = new TapScreen(p);
     // p.frameRate(0.5);
     // p.noLoop();
   };
@@ -123,18 +159,18 @@ const sketch = (p) => {
 
     if (touchX !== null || touchY !== null) {
       p.text(`${sinOsc.f}`, p.width / 2, p.height / 2);
+      ts.update();
     }
 
-    // ts.update();
   };
 
   p.touchStarted = (e) => {
     getTouchXY();
-
     sinOsc.freq(frqRatio(touchX));
     sinOsc.amp(valueRatio(touchY));
     sinOsc.start();
-    // ts.tapStarted()
+
+    ts.tapStarted(touchX, touchY);
 
   };
 
@@ -142,15 +178,16 @@ const sketch = (p) => {
     getTouchXY();
     sinOsc.freq(frqRatio(touchX));
     sinOsc.amp(valueRatio(touchY));
+    ts.taphMoved(touchX, touchY);
   };
 
   p.touchEnded = (e) => {
     touchX = null;
     touchY = null;
     sinOsc.amp(0, delayTime);
-    sinOsc.stop(delayTime + 0.01);
+    sinOsc.stop(delayTime + 0.05);
 
-    // ts.tapEnded()
+    ts.tapEnded();
 
   };
 
@@ -159,9 +196,14 @@ const sketch = (p) => {
   };
 
   function getTouchXY() {
-    for (let touch of p.touches) {
-      touchX = 0 <= touch.x && touch.x <= p.width ? touch.x : null;
-      touchY = 0 <= touch.y && touch.y <= p.height ? touch.y : null;
+    if (eventWrap.isTouch) {
+      for (let touch of p.touches) {
+        touchX = 0 <= touch.x && touch.x <= p.width ? touch.x : null;
+        touchY = 0 <= touch.y && touch.y <= p.height ? touch.y : null;
+      }
+    } else {  // xxx: PC 用。。。ダサい
+      touchX = p.mouseIsPressed && 0 <= p.mouseX && p.mouseX <= p.width ? p.mouseX : null;
+      touchY = p.mouseIsPressed && 0 <= p.mouseY && p.mouseY <= p.height ? p.mouseY : null;
     }
   }
 
@@ -242,6 +284,4 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   notResume();
-  // ctx.suspend().then(() => notResume()).catch((error)=>console.log('h'));
 });
-
