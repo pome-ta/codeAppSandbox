@@ -21,6 +21,51 @@ const sketch = (p) => {
   const delayTime = 0.2;
 
   let pg;
+  let ts;
+  
+  
+  class TapScreen {
+  
+    tapSize = 64;
+    delayInterval = 1000 / 60;
+    
+    constructor(mainCanvas) {
+      this.p = mainCanvas;
+      this.pg = null;
+      
+    }
+    
+    update() {
+      if (this.pg === null) {
+        return;
+      }
+      this.p.image(this.pg, 0, 0);
+    }
+    
+    createTapMark() {
+      this.pg = this.pg ?? this.p.createGraphics(this.tapSize, this.tapSize);
+      this.pg.circle(this.tapSize / 2, this.tapSize / 2, this.tapSize);
+    }
+    
+    pgRemove() {
+      this.pg?.remove();
+      this.pg = null;
+    }
+    
+    tapStarted(x=0, y=0) {
+      this.createTapMark();
+      
+    }
+    taphMoved(x, y) {
+    }
+    tapEnded(x=0, y=0) {
+      this.p.setTimeout(this.pgRemove, this.delayInterval);
+      
+    }
+    
+    resize() {
+    }
+  };
 
   p.setup = () => {
     // put setup code here
@@ -38,15 +83,17 @@ const sketch = (p) => {
     p.textAlign(p.CENTER, p.CENTER);
     p.textSize(32);
 
-    pg = p.createGraphics(p.width / 2, p.height / 2);
-    //pg.style("display", "");
-    //pg.position(0, 0)
-
-    pg.background(p.color(0.5, 0.8, 128 / 255));
-    pg.ellipse(pg.width / 2, pg.height / 2, 50, 50);
-
-    //p.image(pg, 0, 0)
+    //pg = p.createGraphics(p.width / 2, p.height / 2);
     //console.log(pg)
+
+    //pg.background(p.color(0.5, 0.8, 128 / 255));
+    //pg.ellipse(pg.width / 2, pg.height / 2, 50, 50);
+    
+    ts = new TapScreen(p);
+    
+    
+    
+
 
     // p.frameRate(0.5);
     //p.noLoop();
@@ -90,10 +137,12 @@ const sketch = (p) => {
       p.text(`${sinOsc.f}`, p.width / 2, p.height / 2);
     }
 
-    pg.background(p.color(0.8, 0.8, 128 / 255));
+    //pg.background(p.color(0.8, 0.8, 128 / 255));
+    //pg.ellipse(pg.width / 2, pg.height / 2, 50, 50);
     //p.image(pg, 0, 0);
     //pg.translate(0,0)
     //pg.ellipse(pg.width / 2, pg.height / 2, 50, 50);
+    ts.update();
   };
 
   p.touchStarted = (e) => {
@@ -102,6 +151,7 @@ const sketch = (p) => {
     sinOsc.freq(frqRatio(touchX));
     sinOsc.amp(valueRatio(touchY));
     //sinOsc.start();
+    ts.tapStarted()
     
   };
 
@@ -117,6 +167,7 @@ const sketch = (p) => {
     //
     sinOsc.amp(0,delayTime);
     sinOsc.stop(delayTime + 0.01);
+    ts.tapEnded()
     
   };
 
