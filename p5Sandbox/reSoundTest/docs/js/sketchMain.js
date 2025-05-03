@@ -28,11 +28,12 @@ const sketch = (p) => {
   
     tapSize = 64;
     delayInterval = 1000 / 60;
+    baseColorHSB = [0.5, 0.8, 0.5];
     
     constructor(mainCanvas) {
       this.p = mainCanvas;
       this.pg = null;
-      this.baseColor = this.p.color(0.75);
+      
       
     }
     
@@ -45,12 +46,21 @@ const sketch = (p) => {
     
     createTapMark() {
       this.pg = this.pg ?? this.p.createGraphics(this.tapSize, this.tapSize);
+      
+      
+      this.p.push();
       this.pg.noStroke();
+      //this.p.colorMode(this.p.RGB, 1.0, 1.0, 1.0, 1.0);
+      //this.pg.color(...this.baseColorHSB);
+      this.p.color(0.5, 0.8, 0.5);
+      
+      this.pg.circle(this.tapSize / 2, this.tapSize / 2, this.tapSize);
       
      // this.pg.fill(this.baseColor);
       //this.pg.fill(this.pg.color(this.baseColor, 192));
-      console.log(this.delayInterval)
-      this.pg.circle(this.tapSize / 2, this.tapSize / 2, this.tapSize);
+      //console.log(this.delayInterval)
+      this.p.pop();
+      
     }
     
     pgRemove() {
