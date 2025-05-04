@@ -280,11 +280,15 @@ class WebViewController(UIViewController):
   # --- private
   @objc_method
   def loadFileIndexPath(self):
-    #fileURLWithPath = NSURL.fileURLWithPath_isDirectory_
+    fileURLWithPath = NSURL.fileURLWithPath_isDirectory_
+    loadFileURL = fileURLWithPath(str(self.indexPathObject), False)
+    allowingReadAccessToURL = fileURLWithPath(str(self.indexPathObject.parent), True)
+    '''
     loadFileURL = NSURL.fileURLWithPath_isDirectory_(str(self.indexPathObject),
                                                      False)
     allowingReadAccessToURL = NSURL.fileURLWithPath_isDirectory_(
       str(self.indexPathObject.parent), True)
+    '''
 
     self.wkWebView.loadFileURL_allowingReadAccessToURL_(
       loadFileURL, allowingReadAccessToURL)
