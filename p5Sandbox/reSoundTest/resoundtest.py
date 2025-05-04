@@ -99,27 +99,19 @@ class WebViewController(UIViewController):
     promptLabel.setFont_(
       UIFont.preferredFontForTextStyle_(UIFontTextStyle.callout))
 
-    #promptLabel.setBackgroundColor_(UIColor.systemDarkOrangeColor())
-    #promptLabel.backgroundColor = UIColor.systemDarkOrangeColor()
-
     titleLabel = UILabel.new()
     titleLabel.setTextAlignment_(NSTextAlignment.center)
     titleLabel.setFont_(
       UIFont.preferredFontForTextStyle_(UIFontTextStyle.caption1))
-    #titleLabel.setBackgroundColor_(UIColor.systemDarkBlueColor())
-    #titleLabel.backgroundColor = UIColor.systemDarkBlueColor()
 
     stackView = UIStackView.alloc().initWithArrangedSubviews_([
       promptLabel,
       titleLabel,
     ])
     stackView.setDistribution_(UIStackViewDistribution.equalCentering)
-    #pdbr.state(stackView)
-    #stackView.setBackgroundColor_(UIColor.systemDarkPurpleColor())
 
     stackTextItem = UIBarButtonItem.alloc().initWithCustomView_(stackView)
     stackView.setAxis_(UILayoutConstraintAxis.vertical)
-    #pdbr.state(stackView)
 
     flexibleSpace = UIBarButtonSystemItem.flexibleSpace
     flexibleSpaceBarButtonItem = UIBarButtonItem.alloc(
@@ -326,7 +318,6 @@ if __name__ == '__main__':
   from rbedge.enumerations import UIModalPresentationStyle
 
   index_path = Path('./docs/index.html')
-  
 
   main_vc = WebViewController.alloc().initWithIndexPath_(index_path)
 
@@ -335,5 +326,4 @@ if __name__ == '__main__':
 
   app = App(main_vc, presentation_style)
   app.present()
-  
 
