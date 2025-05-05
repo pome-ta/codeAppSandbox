@@ -17738,7 +17738,66 @@ const defaultHighlightStyle = /*@__PURE__*/HighlightStyle.define([
     { tag: tags.invalid,
         color: "#f00" }
 ]);
+
+const baseTheme = /*@__PURE__*/EditorView.baseTheme({
+    "&.cm-focused .cm-matchingBracket": { backgroundColor: "#328c8252" },
+    "&.cm-focused .cm-nonmatchingBracket": { backgroundColor: "#bb555544" }
+});
 const DefaultScanDist = 10000, DefaultBrackets = "()[]{}";
+const bracketMatchingConfig = /*@__PURE__*/Facet.define({
+    combine(configs) {
+        return combineConfig(configs, {
+            afterCursor: true,
+            brackets: DefaultBrackets,
+            maxScanDistance: DefaultScanDist,
+            renderMatch: defaultRenderMatch
+        });
+    }
+});
+const matchingMark = /*@__PURE__*/Decoration.mark({ class: "cm-matchingBracket" }), nonmatchingMark = /*@__PURE__*/Decoration.mark({ class: "cm-nonmatchingBracket" });
+function defaultRenderMatch(match) {
+    let decorations = [];
+    let mark = match.matched ? matchingMark : nonmatchingMark;
+    decorations.push(mark.range(match.start.from, match.start.to));
+    if (match.end)
+        decorations.push(mark.range(match.end.from, match.end.to));
+    return decorations;
+}
+const bracketMatchingState = /*@__PURE__*/StateField.define({
+    create() { return Decoration.none; },
+    update(deco, tr) {
+        if (!tr.docChanged && !tr.selection)
+            return deco;
+        let decorations = [];
+        let config = tr.state.facet(bracketMatchingConfig);
+        for (let range of tr.state.selection.ranges) {
+            if (!range.empty)
+                continue;
+            let match = matchBrackets(tr.state, range.head, -1, config)
+                || (range.head > 0 && matchBrackets(tr.state, range.head - 1, 1, config))
+                || (config.afterCursor &&
+                    (matchBrackets(tr.state, range.head, 1, config) ||
+                        (range.head < tr.state.doc.length && matchBrackets(tr.state, range.head + 1, -1, config))));
+            if (match)
+                decorations = decorations.concat(config.renderMatch(match, tr.state));
+        }
+        return Decoration.set(decorations, true);
+    },
+    provide: f => EditorView.decorations.from(f)
+});
+const bracketMatchingUnique = [
+    bracketMatchingState,
+    baseTheme
+];
+/**
+Create an extension that enables bracket matching. Whenever the
+cursor is next to a bracket, that bracket and the one it matches
+are highlighted. Or, when no matching bracket is found, another
+highlighting style is used to indicate this.
+*/
+function bracketMatching(config = {}) {
+    return [bracketMatchingConfig.of(config), bracketMatchingUnique];
+}
 /**
 When larger syntax nodes, such as HTML tags, are marked as
 opening/closing, it can be a bit messy to treat the whole node as
@@ -19572,7 +19631,6 @@ const minimalSetup = /*@__PURE__*/(() => [
     ])
 ])();
 
-//import { bracketMatching } from '@codemirror/language';
 // import { javascript } from '@codemirror/lang-javascript';
 //import { cpp } from '@codemirror/lang-cpp';
 //import { oneDark } from './theme-custom-dark.js';

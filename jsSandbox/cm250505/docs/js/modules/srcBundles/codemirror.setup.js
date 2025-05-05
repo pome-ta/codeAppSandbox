@@ -26,7 +26,7 @@ import {
   toggleComment,
 } from '@codemirror/commands';
 import { closeBrackets } from '@codemirror/autocomplete';
-//import { bracketMatching } from '@codemirror/language';
+import { bracketMatching } from '@codemirror/language';
 // import { javascript } from '@codemirror/lang-javascript';
 //import { cpp } from '@codemirror/lang-cpp';
 //import { oneDark } from './theme-custom-dark.js';
