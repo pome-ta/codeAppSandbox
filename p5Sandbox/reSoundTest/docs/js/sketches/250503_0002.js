@@ -102,7 +102,7 @@ const sketch = (p) => {
     sinOsc.freq(frqRatio(touchX));
     sinOsc.amp(valueRatio(touchY));
     sinOsc.start();
-    
+
   };
 
   p.touchMoved = (e) => {
@@ -115,9 +115,9 @@ const sketch = (p) => {
     touchX = null;
     touchY = null;
     //
-    sinOsc.amp(0,delayTime);
+    sinOsc.amp(0, delayTime);
     sinOsc.stop(delayTime + 0.01);
-    
+
   };
 
   p.windowResized = (event) => {
@@ -136,10 +136,10 @@ const sketch = (p) => {
     const fr = (f / (p.width / 2)) * frq;
     return Math.ceil(fr * 1000) / 1000;
   }
-  
+
   function valueRatio(v) {
-    
-    const vl =  v === null ? 0 : v / p.height - 1;
+
+    const vl = v === null ? 0 : v / p.height - 1;
     return vl;
   }
 

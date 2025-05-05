@@ -141,7 +141,7 @@ const sketch = (p) => {
     getTouchXY();
     sinOsc.freq(frqRatio(touchX));
     sinOsc.amp(valueRatio(touchY));
-    
+
     ts.taphMoved(touchX, touchY);
   };
 

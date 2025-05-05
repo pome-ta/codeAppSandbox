@@ -19,7 +19,7 @@ const sketch = (p) => {
     p.colorMode(p.HSB, 1.0, 1.0, 1.0, 1.0);
     bgColor = p.color(0, 0, 64 / 255);
     p.background(bgColor);
-    
+
     sinOsc = new p5.SinOsc();
     // sinOsc.start();
 
@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const ctx = myp5.getAudioContext();
   ctx.addEventListener('statechange', (e) => ctx.state !== 'running' ? notResume() : null);
-  
+
 
 
   const isResume = () => {

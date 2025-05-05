@@ -69,7 +69,7 @@ const sketch = (p) => {
     fadeOutMark = () => {
       // console.log('/ ---')
       // console.log(this.fadeValue)
-      this.fadeValue =this.fadeValue + this.fadeCount;
+      this.fadeValue = this.fadeValue + this.fadeCount;
       // console.log(this.fadeValue)
       // console.log('--- /')
       if (this.fadeValue < 1) {
@@ -81,8 +81,8 @@ const sketch = (p) => {
         this.update();
         // this.pgColor = this.pg.color(...this.baseColrHSB,1.0 - this.fadeValue);
         // this.pg.fill(this.pgColor);
-   
-        
+
+
         requestAnimationFrame(this.fadeOutMark);
       } else {
         this.pgRemove();
