@@ -2,7 +2,7 @@
 /* @import url('./styleChecker.css'); */
 
 html {
-  height: 100%;
+  height: 100dvh;
   /* タップアクション制御 */
   /*
   -moz-user-select: none;
