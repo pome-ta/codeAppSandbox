@@ -122,8 +122,10 @@ const extensions = [
 ];
 
 
-const docStr = `let hoge = 1;
-console.log(hoge + 1);
+const docStr = `const items = [1, 2, 3, 4];
+for (let item of items) {
+  console.log(item)
+}
 `;
 
 // --- EditorView
@@ -139,8 +141,8 @@ const state = EditorState.create({
  * sandbox へ投げるメッセージ
  */
 const postMessage = () => {
-  console.log(controller.style)
-  const src = editor.contentDOM.editContext.text;
+  //const src = editor.contentDOM.editContext.text;
+  const src = editor.viewState.state.doc.toString();
   sandbox.contentWindow.postMessage(src, '*');
 };
 
