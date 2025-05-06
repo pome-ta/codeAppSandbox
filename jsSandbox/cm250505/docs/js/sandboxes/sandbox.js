@@ -3,6 +3,7 @@
 
 let consoleResult;
 
+
 console.log = function (...log) {
   consoleResult += log.map((lg) => JSON.stringify(lg)) + '\n';
 };

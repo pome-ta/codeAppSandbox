@@ -15,22 +15,29 @@ let editor;
 // sandbox
 const sandbox = document.createElement('iframe');
 sandbox.id = 'sandbox'
-sandbox.src = './sandboxes/sandbox.html'
+sandbox.src = './js/sandboxes/sandbox.html'
 sandbox.style.display = 'none'
 
 const controller = document.createElement('div');
 controller.id = 'controller'
+controller.style.display = 'flex'
+controller.style.justifyContent = 'space-between'
+// controller.style.margin = '1rem';
+
+
+
 
 const runCode = document.createElement('button');
 runCode.id = 'runCode'
 runCode.textContent = 'runCode'
+runCode.style.margin = '1rem';
 
 const clearConsole = document.createElement('button');
-clearConsole.id ='clearConsole'
+clearConsole.id = 'clearConsole'
 clearConsole.textContent = 'clearConsole'
+clearConsole.style.margin = '1rem';
 
-controller.appendChild(runCode)
-controller.appendChild(clearConsole)
+
 
 
 
@@ -76,36 +83,23 @@ const removeTableRow = () => {
   }
 };
 
-document.body.appendChild(controller)
-document.body.appendChild(sandbox)
-document.body.appendChild(boxConsole)
-setupTable();
+
+
+
+const container = document.createElement('main');
+container.id = 'container-main';
+container.style.height = '100%';
+//container.style.backgroundColor = 'maroon';
+
+const editorDiv = document.createElement('div');
+editorDiv.id = 'editor-div';
+editorDiv.style.width = '100%';
+// editorDiv.style.height = '100%';
+//editorDiv.style.backgroundColor = 'darkseagreen';
 
 
 
 /* --- main */
-// --- wrap
-const setupWrap = () => {
-
-
-  const container = document.createElement('main');
-  container.id = 'container-main';
-  container.style.height = '100dvh';
-  //container.style.backgroundColor = 'maroon';
-
-  const editorDiv = document.createElement('div');
-  editorDiv.id = 'editor-div';
-  editorDiv.style.width = '100%';
-  editorDiv.style.height = '100dvh';
-  //editorDiv.style.backgroundColor = 'darkseagreen';
-  
-
-  document.body.appendChild(container).appendChild(editorDiv);
-  return editorDiv;
-
-}
-
-
 
 const myTheme = EditorView.theme(
   {
@@ -119,7 +113,7 @@ const myTheme = EditorView.theme(
     },
     '.cm-line': { padding: 0 },
   },
-  { dark: true }
+  { dark: false }
 );
 
 const extensions = [
@@ -127,26 +121,60 @@ const extensions = [
   myTheme,
 ];
 
+
+const docStr = `let hoge = 1;
+console.log(hoge + 1);
+`;
+
 // --- EditorView
-const viewEditor = () => {
-  // document.body.appendChild(container).appendChild(editorDiv);
-  const editorDiv = setupWrap();
+const state = EditorState.create({
+  extensions: extensions,
+  doc: docStr,
+});
 
-  const state = EditorState.create({
-    extensions: extensions,
-    doc: 'ほげほげ',
-  })
-  editor = new EditorView({
-    state,
-    parent: editorDiv,
-  })
 
-}
+
+
+/**
+ * sandbox へ投げるメッセージ
+ */
+const postMessage = () => {
+  console.log(controller.style)
+  const src = editor.contentDOM.editContext.text;
+  sandbox.contentWindow.postMessage(src, '*');
+};
+
+window.addEventListener('message', (e) => {
+  if (e.data.isSandbox) {
+    addTableRow(e.data.result);
+  }
+});
+
+
 
 
 document.addEventListener('DOMContentLoaded', () => {
-  viewEditor();
-  
-  console.log(editor)
+  editor = new EditorView({
+    state,
+    parent: editorDiv,
+  });
+
+  controller.appendChild(clearConsole)
+  controller.appendChild(runCode)
+
+  // document.body.appendChild(controller)
+  // document.body.appendChild(sandbox)
+
+
+  // document.body.appendChild(controller);
+  document.body.appendChild(container);
+  document.body.appendChild(container).appendChild(controller);
+  container.appendChild(editorDiv);
+  container.appendChild(boxConsole);
+  container.appendChild(sandbox);
+
+  setupTable();
+  runCode.addEventListener('click', (e) => postMessage());
+  clearConsole.addEventListener('click', (e) => removeTableRow());
 
 });
