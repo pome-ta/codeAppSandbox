@@ -38,11 +38,6 @@ clearConsole.textContent = 'clearConsole'
 clearConsole.style.margin = '1rem';
 
 
-
-
-
-
-
 /**
  * boxConsole(実行結果table)
  */
