@@ -1,4 +1,4 @@
-import './sketchMain.js';
+//import './sketchMain.js';
 
 /*
 import('./sketchMain.js').then(module => {
@@ -13,3 +13,10 @@ import('./sketchMain.js').then(module => {
       sub.subMethod();  
     });
 */
+
+
+document.addEventListener('DOMContentLoaded', () => {
+  const scriptElement = document.createElement('script');
+  scriptElement.src = "./js/sketchMain.js";
+  document.head.appendChild(scriptElement);
+});
