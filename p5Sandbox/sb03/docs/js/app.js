@@ -13,10 +13,21 @@ import('./sketchMain.js').then(module => {
       sub.subMethod();  
     });
 */
+const button = document.createElement('button');
+button.type = 'button';
+button.textContent = 'button';
+
+button.addEventListener('click', ()=>{
+
+console.log('button')
+});
 
 
 document.addEventListener('DOMContentLoaded', () => {
   const scriptElement = document.createElement('script');
   scriptElement.src = "./js/sketchMain.js";
   document.head.appendChild(scriptElement);
+  document.body.appendChild(button);
+  console.log(scriptElement)
+  
 });
