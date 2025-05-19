@@ -14,11 +14,12 @@ import('./sketchMain.js').then(module => {
     });
 */
 
+const scriptElement = document.createElement('script');
 
 
 const sketchCode = `
 function setup() {
-  createCanvas(240, 320);
+  createCanvas(240, 240);
 }
 
 function draw() {
@@ -27,7 +28,7 @@ function draw() {
 
 const jsBlob = new Blob([sketchCode], { type: 'text/javascript' })
 const blobURL=URL.createObjectURL(jsBlob);
-console.log(blobURL)
+//console.log(blobURL)
 
 
 
@@ -38,12 +39,15 @@ button.textContent = 'button';
 button.addEventListener('click', ()=>{
 
 console.log('button')
+scriptElement.src = blobURL;
+location.reload(false)
 });
 
 
 document.addEventListener('DOMContentLoaded', () => {
-  const scriptElement = document.createElement('script');
+  
   scriptElement.src = "./js/sketchMain.js";
+  //scriptElement.src = blobURL;
   document.head.appendChild(scriptElement);
   document.body.appendChild(button);
   console.log(scriptElement)
