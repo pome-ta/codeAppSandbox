@@ -24320,28 +24320,6 @@ const autoCloseTags = /*@__PURE__*/EditorView.inputHandler.of((view, from, to, t
     return true;
 });
 
-//import { cpp } from '@codemirror/lang-cpp';
-//import { oneDark } from './theme-custom-dark.js';
-
-// const editorDiv = document.createElement('div');
-// editorDiv.id = 'editor-div';
-// editorDiv.style.width = '100%';
-
-// const myTheme = EditorView.theme(
-//   {
-//     '&': {
-//       // fontSize: '0.72rem',
-//       fontSize: '1rem',
-//     },
-//     '.cm-scroller': {
-//       fontFamily:
-//         'Consolas, Menlo, Monaco, source-code-pro, Courier New, monospace',
-//     },
-//     '.cm-line': { padding: 0 },
-//   },
-//   { dark: true }
-// );
-
 const tabSize = new Compartment();
 
 const initExtensions = [
@@ -24355,9 +24333,6 @@ const initExtensions = [
   EditorView.lineWrapping, // 改行
   tabSize.of(EditorState.tabSize.of(2)),
   javascript(),
-  //cpp(),
-  //oneDark,
-  // myTheme,
 ];
 
 export { Decoration, EditorSelection, EditorState, EditorView, StateEffect, StateField, cursorCharLeft, cursorCharRight, cursorLineDown, cursorLineUp, highlightSpecialChars, indentSelection, initExtensions, redo, selectAll, selectLine, toggleComment, undo };

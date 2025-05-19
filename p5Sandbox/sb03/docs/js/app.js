@@ -39,8 +39,10 @@ button.textContent = 'button';
 button.addEventListener('click', ()=>{
 
 console.log('button')
-scriptElement.src = blobURL;
+
 location.reload(false)
+scriptElement.src = blobURL;
+console.log(blobURL)
 });
 
 
@@ -50,6 +52,6 @@ document.addEventListener('DOMContentLoaded', () => {
   //scriptElement.src = blobURL;
   document.head.appendChild(scriptElement);
   document.body.appendChild(button);
-  console.log(scriptElement)
+  //console.log(scriptElement)
   
 });
