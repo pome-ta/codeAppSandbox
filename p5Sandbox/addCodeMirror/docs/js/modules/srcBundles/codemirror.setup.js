@@ -29,7 +29,32 @@ import { closeBrackets, autocompletion } from '@codemirror/autocomplete';
 import { bracketMatching } from '@codemirror/language';
 import { javascript } from '@codemirror/lang-javascript';
 
+
+
 const tabSize = new Compartment();
+
+const cursor = '#528bff';  // oneDarkTheme
+const myTheme = EditorView.theme(
+  {
+    '&': {
+      // fontSize: '0.72rem',
+      fontSize: '1rem',
+    },
+    '.cm-scroller': {
+      fontFamily:
+        'Consolas, Menlo, Monaco, source-code-pro, Courier New, monospace',
+    },
+    '.cm-content': {
+      caretColor: cursor,
+    },
+    '.cm-cursor, .cm-dropCursor': { borderLeftColor: cursor },
+    '.cm-line': { padding: 0 },
+  },
+  { dark: true }
+);
+
+
+
 
 const initExtensions = [
   minimalSetup,
@@ -42,6 +67,7 @@ const initExtensions = [
   EditorView.lineWrapping, // 改行
   tabSize.of(EditorState.tabSize.of(2)),
   javascript(),
+  myTheme,
 ];
 
 export {

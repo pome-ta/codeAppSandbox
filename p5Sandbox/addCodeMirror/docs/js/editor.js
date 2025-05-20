@@ -6,7 +6,6 @@ import {
   StateEffect,
   Decoration,
   initExtensions,
-  //editorDiv,
 } from './modules/codemirror.bundle.js';
 
 
@@ -112,44 +111,49 @@ const resOutlineTheme = EditorView.baseTheme({
   },
 });
 
+/*
 const fontSizeTheme = EditorView.theme({
   '&': {
     fontSize: hasTouchScreen ? '0.72rem' : '1.0rem',
   },
 });
-
+*/
 
 
 const _extensions = [
-  fontSizeTheme,
+  //fontSizeTheme,
   ...initExtensions,
   //whitespaceShow,
   resOutlineTheme,
   bgRectangleTheme,
-  updateCallback,
 ];
 
 
 class Editor {
   constructor(editorDiv, doc='', extensions=null) {
+    this.updateCallback = EditorView.updateListener.of((update) => update.docChanged && this.onChange(update.state.doc.toString()));
     this.editorDiv = editorDiv
     this.doc = doc
     //this.extensions = extensions ? [..._extensions, ...extensions] : _extensions;
-    this.extensions = _extensions;
-    
-    
+    this.extensions = [..._extensions, this.updateCallback];
     
     this.state = EditorState.create({
       doc: this.doc,
       extensions: this.extensions,
     });
     this.editor = new EditorView({
-      this.state,
+      state: this.state,
       parent: this.editorDiv,
     });
     
     bgRectangleSet(this.editor);
   }
+  
+  
+  onChange(docs) {
+    bgRectangleSet(this.editor);
+  }
+  
 }
 
 

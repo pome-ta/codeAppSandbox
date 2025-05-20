@@ -24322,6 +24322,29 @@ const autoCloseTags = /*@__PURE__*/EditorView.inputHandler.of((view, from, to, t
 
 const tabSize = new Compartment();
 
+const cursor = '#528bff';  // oneDarkTheme
+const myTheme = EditorView.theme(
+  {
+    '&': {
+      // fontSize: '0.72rem',
+      fontSize: '1rem',
+    },
+    '.cm-scroller': {
+      fontFamily:
+        'Consolas, Menlo, Monaco, source-code-pro, Courier New, monospace',
+    },
+    '.cm-content': {
+      caretColor: cursor,
+    },
+    '.cm-cursor, .cm-dropCursor': { borderLeftColor: cursor },
+    '.cm-line': { padding: 0 },
+  },
+  { dark: true }
+);
+
+
+
+
 const initExtensions = [
   minimalSetup,
   lineNumbers(),
@@ -24333,6 +24356,7 @@ const initExtensions = [
   EditorView.lineWrapping, // 改行
   tabSize.of(EditorState.tabSize.of(2)),
   javascript(),
+  myTheme,
 ];
 
 export { Decoration, EditorSelection, EditorState, EditorView, StateEffect, StateField, cursorCharLeft, cursorCharRight, cursorLineDown, cursorLineUp, highlightSpecialChars, indentSelection, initExtensions, redo, selectAll, selectLine, toggleComment, undo };

@@ -8,6 +8,6 @@ editorDiv.style.width = '100%';
 document.addEventListener('DOMContentLoaded', () => {
   
   document.body.appendChild(editorDiv);
-  const editor = Editor(editorDiv)
+  const editor = new Editor(editorDiv)
   
 });
