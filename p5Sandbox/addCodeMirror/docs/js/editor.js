@@ -223,7 +223,7 @@ const _extensions = [
   transparentTheme,
   //fontSizeTheme,
   ...initExtensions,
-  //whitespaceShow,
+  whitespaceShow,
   resOutlineTheme,
   
   bgRectangleTheme,
