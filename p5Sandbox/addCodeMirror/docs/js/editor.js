@@ -221,11 +221,11 @@ const transparentTheme = EditorView.theme({
 
 const _extensions = [
   transparentTheme,
+  
   //fontSizeTheme,
   ...initExtensions,
-  whitespaceShow,
+  //whitespaceShow,
   resOutlineTheme,
-  
   bgRectangleTheme,
 ];
 
@@ -252,6 +252,7 @@ class Editor {
   
   
   onChange(docs) {
+    console.log('on')
     bgRectangleSet(this.editor);
   }
   
