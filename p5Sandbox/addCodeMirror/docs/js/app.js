@@ -12,6 +12,18 @@ function draw() {
 }`;
 
 
+
+const editorDiv = document.createElement('div');
+editorDiv.id = 'editor-div';
+editorDiv.style.width = '100%';
+
+document.body.style.backgroundColor = 'teal'
+
+
+const editor = new Editor(editorDiv, sketchCode);
+
+
+
 // sandbox
 const sandbox = document.createElement('iframe');
 sandbox.id = 'sandbox';
@@ -20,6 +32,28 @@ sandbox.src = './js/sandboxes/sandbox.html';
 sandbox.style.width = '100%';
 sandbox.style.height = '50%';
 sandbox.style.backgroundColor = 'maroon';
+document.body.appendChild(sandbox);
+
+let jsBlob = new Blob([sketchCode], { type: 'text/javascript' });
+let blobURL = URL.createObjectURL(jsBlob);
+sandbox.contentWindow.postMessage(blobURL, '*');
+
+//postMessage()
+
+/**
+ * sandbox へ投げるメッセージ
+ */
+const postMessage = () => {
+  const src = editor.doc
+  jsBlob = new Blob([src], { type: 'text/javascript' });
+  blobURL = URL.createObjectURL(jsBlob);
+  sandbox.contentWindow.postMessage(blobURL, '*');
+  
+  //sandbox.contentWindow.postMessage(src, '*');
+  console.log(src)
+};
+
+
 
 /*
 const sketchMain = document.createElement('main');
@@ -40,30 +74,12 @@ runButton.id = 'runButton'
 runButton.textContent = 'runCode'
 runButton.style.margin = '1rem';
 
-const editorDiv = document.createElement('div');
-editorDiv.id = 'editor-div';
-editorDiv.style.width = '100%';
 
-document.body.style.backgroundColor = 'teal'
 
-/**
- * sandbox へ投げるメッセージ
- */
-const postMessage = () => {
-  const src = editor.doc
-  const jsBlob = new Blob([src], { type: 'text/javascript' });
-  const blobURL = URL.createObjectURL(jsBlob);
-  sandbox.contentWindow.postMessage(blobURL, '*');
-  
-  //sandbox.contentWindow.postMessage(src, '*');
-  console.log(src)
-};
-
-const editor = new Editor(editorDiv, sketchCode);
 
 document.addEventListener('DOMContentLoaded', () => {
   //document.body.appendChild(sketchMain);
-  document.body.appendChild(sandbox);
+  
   document.body.appendChild(runButton);
   document.body.appendChild(editorDiv);
   
@@ -73,11 +89,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const jsBlob = new Blob([editor.doc], { type: 'text/javascript' })
   const blobURL = URL.createObjectURL(jsBlob);
   //scriptElement.src = blobURL;
-  console.log(blobURL)
+  //console.log(blobURL)
   
   
   runButton.addEventListener('click', (e) => postMessage());
-  postMessage()
+  //postMessage()
+  
 
   
   //console.log(editor)
