@@ -1,23 +1,46 @@
 let sketchCode = '';
+let loadedSource;
+const fsPath = '../sketchBook/mainSketch.js';
 
-console.log('top')
+/* -- load Source */
+async function fetchSketchFile(path) {
+  const res = await fetch(path);
+  const sketchText = await res.text();
+  return sketchText;
+}
 
+/*
+function getBlobURL(sourceStr) {
+  const jsBlob = new Blob([sourceStr], { type: 'text/javascript' });
+  const blobURL = URL.createObjectURL(jsBlob);
+  return blobURL;
+}
+
+*/
+
+
+//loadedSource = await fetchSketchFile(fsPath);
+
+
+//const scriptElement = document.createElement('script');
+//scriptElement.id = 'scriptElement';
 
 window.addEventListener('message', (e) => {
-console.log('EventListener')
-  sketchCode = e.data;
-  console.log(`e:${sketchCode}`)
+  console.log(e.data);
 });
-console.log(`o:${sketchCode}`)
+
 
 document.addEventListener('DOMContentLoaded', () => {
-  
-  console.log('d')
-  console.log(`d:${sketchCode}`)
+  console.log(`DOMContentLoaded`);
+  //loadedSource = await fetchSketchFile(fsPath);
+  //scriptElement.src = fsPath;//getBlobURL(loadedSource);
+  //document.head.appendChild(scriptElement);
+  //document.body.appendChild(scriptElement);
   
 });
 
-window.addEventListener('load', ()=>{
-  console.log('ページの読み込みが完了しました。');
-  console.log(`l:${sketchCode}`)
+window.addEventListener('load', () => {
+  console.log(`load`);
 });
+
+
