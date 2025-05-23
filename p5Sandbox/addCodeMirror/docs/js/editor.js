@@ -234,12 +234,12 @@ class Editor {
   constructor(editorDiv, doc='', extensions=null) {
     this.updateCallback = EditorView.updateListener.of((update) => update.docChanged && this.onChange(update.state.doc.toString()));
     this.editorDiv = editorDiv
-    this.doc = doc
+    //this._doc = doc
     //this.extensions = extensions ? [..._extensions, ...extensions] : _extensions;
     this.extensions = [..._extensions, this.updateCallback];
     
     this.state = EditorState.create({
-      doc: this.doc,
+      doc: doc,
       extensions: this.extensions,
     });
     this.editor = new EditorView({
@@ -252,8 +252,11 @@ class Editor {
   
   
   onChange(docs) {
-    console.log('on')
     bgRectangleSet(this.editor);
+  }
+  
+  get toString() {
+    return this.editor.viewState.state.doc.toString();
   }
   
 }

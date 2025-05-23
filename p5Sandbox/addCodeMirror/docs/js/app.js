@@ -4,6 +4,7 @@ import Editor from './editor.js';
 let loadedSource;
 
 /* -- load Source */
+/*
 async function fetchSketchFile(path) {
   const res = await fetch(path);
   const sketchText = await res.text();
@@ -12,7 +13,15 @@ async function fetchSketchFile(path) {
 
 const fsPath = './js/sketchBook/mainSketch.js';
 loadedSource = await fetchSketchFile(fsPath);
+*/
 
+loadedSource = `function setup() {
+  createCanvas(240, 240);
+}
+
+function draw() {
+  background(random() * 255);
+}`;
 
 const topSource = `<!doctype html>
 <html lang="ja">
@@ -40,8 +49,14 @@ const bottomSource = `
 </html>
 `;
 
-
+/*
 function getBlobURL(sourceCode) {
+  const sourceBlob = new Blob([sourceCode], { type: 'text/html' });
+  const blobURL = URL.createObjectURL(sourceBlob);
+  return blobURL;
+}
+*/
+const getBlobURL = (sourceCode) => {
   const sourceBlob = new Blob([sourceCode], { type: 'text/html' });
   const blobURL = URL.createObjectURL(sourceBlob);
   return blobURL;
@@ -77,25 +92,40 @@ runButton.id = 'runButton'
 runButton.textContent = 'runCode'
 runButton.style.margin = '1rem';
 
-function pushRun() {
-  const sourceCode = topSource + editor.doc + bottomSource;
-  console.log(sourceCode)
-  sandbox.src = getBlobURL(sourceCode);
-  sandbox.contentWindow.location.reload(true)
+
+
+
+const reloadSketch = (iframeElement, editorObject) => {
+  const sourceCode = topSource + editorObject.toString + bottomSource;
+  iframeElement.src = getBlobURL(sourceCode);
+  iframeElement.contentWindow.location.reload()
 }
 
 
-runButton.addEventListener('click', (e) => pushRun());
+runButton.addEventListener('click', (e) => reloadSketch(sandbox, editor));
 
 
 
 
 document.addEventListener('DOMContentLoaded', () => {
   console.log('hoge');
-  sandbox.src = getBlobURL(topSource + editor.doc + bottomSource);
+  sandbox.src = getBlobURL(topSource + editor.toString + bottomSource);
+  
   document.body.appendChild(runButton);
   document.body.appendChild(sandbox);
   document.body.appendChild(editorDiv);
+  //reloadSketch(sandbox, editor);
   
 });
 
+
+/*
+window.addEventListener('load', (event) => {
+  sandbox.src = getBlobURL(topSource + editor.toString + bottomSource);
+  
+  document.body.appendChild(runButton);
+  document.body.appendChild(sandbox);
+  document.body.appendChild(editorDiv);
+
+});
+*/
