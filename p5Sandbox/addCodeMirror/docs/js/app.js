@@ -32,16 +32,18 @@ const topSource = `<!doctype html>
     
   </head>
   <body>
-    <script src="`;
+    <script>`;
 
-const bottomSource = `" crossorigin="anonymous"></script>
+const bottomSource = `
+    </script>
   </body>
 </html>
 `;
 
 
 function getBlobURL(sketchSource) {
-  const sourceBlob = new Blob([sketchSource], { type: 'text/javascript' });
+  //const sourceBlob = new Blob([sketchSource], { type: 'text/javascript' });
+  const sourceBlob = new Blob([sketchSource], { type: 'text/html' });
   const blobURL = URL.createObjectURL(sourceBlob);
   return blobURL;
 }
@@ -86,9 +88,11 @@ function draw() {
 const sandbox = document.createElement('iframe');
 sandbox.id = 'sandbox';
 //sandbox.loading = 'lazy'
-sandbox.sandbox = '';
-sandbox.srcdoc = topSource + getBlobURL(loadedSource) + bottomSource;
+//sandbox.sandbox = '';
+//sandbox.srcdoc = topSource + getBlobURL(loadedSource) + bottomSource;
 //sandbox.srcdoc = hoge;
+//sandbox.src = getBlobURL(hoge);
+sandbox.src = getBlobURL(topSource + loadedSource + bottomSource);
 sandbox.style.width = '100%';
 sandbox.style.height = '50%';
 sandbox.style.backgroundColor = 'maroon';
