@@ -70,7 +70,7 @@ const getBlobURL = (sourceCode) => {
 // sandbox
 const sandbox = document.createElement('iframe');
 sandbox.id = 'sandbox';
-sandbox.loading = 'lazy'
+//sandbox.loading = 'lazy'
 sandbox.style.width = '100%';
 sandbox.style.height = '50%';
 sandbox.style.backgroundColor = 'maroon';
@@ -109,17 +109,29 @@ runButton.addEventListener('click', (e) => reloadSketch(sandbox, editor));
 
 
 
-
-document.addEventListener('DOMContentLoaded', () => {
+function domContentInit() {
   console.log('hoge');
   sandbox.src = getBlobURL(topSource + editor.toString + bottomSource);
   
   document.body.appendChild(runButton);
   document.body.appendChild(sandbox);
   document.body.appendChild(editorDiv);
-  //reloadSketch(sandbox, editor);
-  
-});
+}
+
+
+
+function eventHandler() {
+  document.removeEventListener('DOMContentLoaded', eventHandler);
+  domContentInit();
+}
+
+if (document.readyState !== 'loading') {
+  // DOM解析が完了している場合は即実行
+  doSomething();
+} else {
+  document.addEventListener('DOMContentLoaded', domContentInit);
+}
+
 
 
 /*
