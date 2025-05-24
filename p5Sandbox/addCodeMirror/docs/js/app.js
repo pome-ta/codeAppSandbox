@@ -58,9 +58,6 @@ const bottomSource = `
 `;
 
 
-
-
-
 loadedSource = await fetchSketchFile(fsPath);
 
 
@@ -72,6 +69,7 @@ sandbox.loading = 'lazy'
 sandbox.style.width = '100%';
 sandbox.style.height = '50%';
 sandbox.style.backgroundColor = 'maroon';
+sandbox.src = getBlobURL(mergeSource(topSource, loadedSource, bottomSource));
 
 
 const runButton = document.createElement('button');
@@ -87,15 +85,11 @@ editorDiv.style.backgroundColor = 'dodgerblue'
 
 const editor = new Editor(editorDiv, loadedSource);
 
-
-
-
-sandbox.src = getBlobURL(mergeSource(topSource, editorObject.toString, bottomSource));
 document.body.appendChild(runButton);
 document.body.appendChild(sandbox);
 document.body.appendChild(editorDiv);
-document.body.style.backgroundColor = 'teal'
 
+document.body.style.backgroundColor = 'teal'
 
 runButton.addEventListener('click', (e) => reloadSketch(sandbox, editor));
 
