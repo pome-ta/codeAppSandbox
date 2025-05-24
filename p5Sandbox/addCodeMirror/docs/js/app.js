@@ -23,10 +23,12 @@ function mergeSource(top, fncCode, bottom) {
   return top + fncCode + bottom;
 }
 
-function reloadSketch(iframeElement, editorObject){
-  const sourceCode = mergeSource(topSource, editorObject.toString ,bottomSource);
-  iframeElement.src = getBlobURL(sourceCode);
-  iframeElement.contentWindow.location.reload()
+function reloadSketch(iframeElement, editorObject) {
+  const sourceCode = mergeSource(topSource, editorObject.toString, bottomSource);
+  console.log(sourceCode)
+  // iframeElement.src = getBlobURL(sourceCode);
+  iframeElement.srcdoc = sourceCode;
+  // iframeElement.contentWindow.location.reload();
 }
 
 
@@ -65,11 +67,12 @@ loadedSource = await fetchSketchFile(fsPath);
 // sandbox
 const sandbox = document.createElement('iframe');
 sandbox.id = 'sandbox';
-sandbox.loading = 'lazy'
+sandbox.loading = 'lazy';
 sandbox.style.width = '100%';
 sandbox.style.height = '50%';
 sandbox.style.backgroundColor = 'maroon';
-sandbox.src = getBlobURL(mergeSource(topSource, loadedSource, bottomSource));
+// sandbox.src = getBlobURL(mergeSource(topSource, loadedSource, bottomSource));
+sandbox.srcdoc = mergeSource(topSource, loadedSource, bottomSource);
 
 
 const runButton = document.createElement('button');
@@ -95,13 +98,13 @@ runButton.addEventListener('click', (e) => reloadSketch(sandbox, editor));
 
 
 
-document.addEventListener("readystatechange", (event) => {
-  if (event.target.readyState === "interactive") {
-    console.log('interactive');
-  } else if (event.target.readyState === "complete") {
-    console.log('complete');
-  }
-});
+// document.addEventListener("readystatechange", (event) => {
+//   if (event.target.readyState === "interactive") {
+//     console.log('interactive');
+//   } else if (event.target.readyState === "complete") {
+//     console.log('complete');
+//   }
+// });
 /*
 document.onreadystatechange = () => {
   if (document.readyState === 'interactive') {
