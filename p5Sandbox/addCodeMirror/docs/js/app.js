@@ -4,7 +4,7 @@ import Editor from './editor.js';
 let loadedSource;
 
 /* -- load Source */
-/*
+
 async function fetchSketchFile(path) {
   const res = await fetch(path);
   const sketchText = await res.text();
@@ -12,9 +12,10 @@ async function fetchSketchFile(path) {
 }
 
 const fsPath = './js/sketchBook/mainSketch.js';
-loadedSource = await fetchSketchFile(fsPath);
-*/
 
+loadedSource = await fetchSketchFile(fsPath);
+
+/*
 loadedSource = `function setup() {
   createCanvas(240, 240);
 }
@@ -22,6 +23,8 @@ loadedSource = `function setup() {
 function draw() {
   background(random() * 255);
 }`;
+
+*/
 
 const topSource = `<!doctype html>
 <html lang="ja">
