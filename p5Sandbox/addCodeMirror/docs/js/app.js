@@ -93,3 +93,27 @@ document.body.style.backgroundColor = 'teal'
 
 runButton.addEventListener('click', (e) => reloadSketch(sandbox, editor));
 
+
+
+document.addEventListener("readystatechange", (event) => {
+  if (event.target.readyState === "interactive") {
+    console.log('interactive');
+  } else if (event.target.readyState === "complete") {
+    console.log('complete');
+  }
+});
+/*
+document.onreadystatechange = () => {
+  if (document.readyState === 'interactive') {
+    console.log('document.readyState');
+  }
+};
+*/
+
+/*
+document.addEventListener('DOMContentLoaded',  () => {
+  console.log('DOMContentLoaded');
+  
+});
+
+*/
