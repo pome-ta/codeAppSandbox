@@ -78,14 +78,18 @@ class WebViewController(UIViewController):
     self.navigationController.setNavigationBarHidden_animated_(True, True)
     self.navigationController.setToolbarHidden_animated_(False, True)
 
-    saveUpdateImage = UIImage.systemImageNamed_('circle.badge.checkmark')
+    #saveUpdateImage = UIImage.systemImageNamed_('circle.badge.checkmark')
+    #saveUpdateImage = UIImage.systemImageNamed_('document.circle')
+    saveUpdateImage = UIImage.systemImageNamed_('text.badge.checkmark.rtl')
+    
     saveUpdateButtonItem = UIBarButtonItem.alloc().initWithImage(
       saveUpdateImage,
       style=UIBarButtonItemStyle.plain,
       target=self,
       action=SEL('saveFileAction:'))
 
-    closeImage = UIImage.systemImageNamed_('multiply.circle')
+    #closeImage = UIImage.systemImageNamed_('multiply.circle')
+    closeImage = UIImage.systemImageNamed_('arrow.down.app')
     closeButtonItem = UIBarButtonItem.alloc().initWithImage(
       closeImage,
       style=UIBarButtonItemStyle.plain,
