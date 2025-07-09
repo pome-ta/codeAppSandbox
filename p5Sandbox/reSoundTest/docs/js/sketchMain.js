@@ -67,7 +67,7 @@ const sketch = (p) => {
     tapEnded() {
       this.pg?.remove();
       this.pg = null;
-      this.pgRemove();
+      //this.pgRemove();
       // this.x = null;
       // this.y = null;
     }
